@@ -25,10 +25,8 @@ public class PemesananController {
         this.pesanModel = pesanModel;
         this.view = view;
 
-        // Tampilkan data awal ke JTable
         updateTabelMenu();
         
-        // Pasang gerbang logika tombol
         this.view.getBtnTambah().addActionListener(e -> prosesTambah());
         this.view.getBtnBatal().addActionListener(e -> {
             pesanModel.kosongkanKeranjang();
@@ -40,27 +38,22 @@ public class PemesananController {
     }
 
     private void updateTabelMenu() {
-        // --- 1. MENGISI TABEL MAKANAN ---
         DefaultTableModel dtmMakanan = (DefaultTableModel) view.getTblMenuMakanan().getModel();
         dtmMakanan.setRowCount(0); // Kosongkan dulu
         
         for (Menu m : menuModel.getMenuMakananTerurut()) {
-            // Perhatikan: Kolom Kategori sudah dihilangkan karena tidak perlu
             dtmMakanan.addRow(new Object[]{m.getKode(), m.getNama(), m.getHarga()});
         }
 
-        // --- 2. MENGISI TABEL MINUMAN ---
         DefaultTableModel dtmMinuman = (DefaultTableModel) view.getTblMenuMinuman().getModel();
-        dtmMinuman.setRowCount(0); // Kosongkan dulu
+        dtmMinuman.setRowCount(0);
         
         for (Menu m : menuModel.getMenuMinumanTerurut()) {
-            // Perhatikan: Kolom Kategori sudah dihilangkan karena tidak perlu
             dtmMinuman.addRow(new Object[]{m.getKode(), m.getNama(), m.getHarga()});
         }
     }
     
     private void updateTabelKeranjang() {
-        // --- 1. MENGISI TABEL KERANJANG MINUMAN ---
         DefaultTableModel dtmMinuman = (DefaultTableModel) view.getTblKeranjangMinuman().getModel();
         dtmMinuman.setRowCount(0); // Kosongkan dulu
         
@@ -74,7 +67,6 @@ public class PemesananController {
             });
         }
 
-        // --- 2. MENGISI TABEL KERANJANG MAKANAN ---
         DefaultTableModel dtmMakanan = (DefaultTableModel) view.getTblKeranjangMakanan().getModel();
         dtmMakanan.setRowCount(0); // Kosongkan dulu
         
@@ -93,7 +85,6 @@ public class PemesananController {
             totalKeseluruhan += item.getSubtotal(); 
         }
 
-        // Tampilkan ke Label dengan format Rupiah (tanpa koma desimal)
         view.getLblTotalHarga().setText(String.format("Total Harga: Rp %,.0f", totalKeseluruhan));
     }
 
@@ -115,11 +106,6 @@ public class PemesananController {
             }
         }
 
-        // =========================================================================
-        // BANSER PENYELIP: VALIDASI KODE DAN PEMBATASAN 5 JENIS PER KATEGORI
-        // =========================================================================
-        
-        // 1. Cari tahu kategori menu berdasarkan kode menggunakan method yang sudah ada
         String kategoriMenu = "";
         for (Menu m : menuModel.getMenuMakananTerurut()) {
             if (m.getKode().equalsIgnoreCase(kode)) {
@@ -136,7 +122,6 @@ public class PemesananController {
             }
         }
 
-        // 2. Jika tidak ketemu di makanan maupun minuman, berarti kodenya salah!
         if (kategoriMenu.isEmpty()) {
             JOptionPane.showMessageDialog(view, "Kode menu tidak valid!", "Error", JOptionPane.ERROR_MESSAGE);
             view.getTxtKodeMenu().setText("");
@@ -144,7 +129,6 @@ public class PemesananController {
             return; // Berhenti, jangan masukkan ke keranjang
         }
 
-        // 3. Cek apakah menu ini SEBENARNYA SUDAH ADA di keranjang (hanya tambah porsi)
         boolean sudahAdaDiKeranjang = false;
         for (CartItem item : pesanModel.getKeranjang()) {
             if (item.getMenu().getKode().equalsIgnoreCase(kode)) {
@@ -153,7 +137,7 @@ public class PemesananController {
             }
         }
 
-        // 4. Jika menu yang diinput adalah JENIS BARU, cek batas maksimal 5 jenisnya
+        
         if (!sudahAdaDiKeranjang) {
             if (kategoriMenu.equals("Makanan") && pesanModel.getKeranjangMakananTerurutHarga().size() >= 5) {
                 JOptionPane.showMessageDialog(view, "Keranjang Makanan sudah penuh!\nMaksimal 5 jenis makanan berbeda.", "Peringatan", JOptionPane.WARNING_MESSAGE);
@@ -164,9 +148,7 @@ public class PemesananController {
                 return; 
             }
         }
-        // =========================================================================
-
-        // KODE ASLI KAMU (Tetap dipertahankan karena ini yang memasukkan data ke model)
+        
         String hasil = pesanModel.tambahKeKeranjang(kode, qty);
         if (hasil.equals("Sukses")) {
             updateTabelKeranjang();
@@ -178,23 +160,14 @@ public class PemesananController {
     }
     
     private void prosesSelesai() {
-        // cek apakah keranjang kosong
         if (pesanModel.getKeranjang().isEmpty()) {
             JOptionPane.showMessageDialog(view, "Keranjang masih kosong!\nSilakan pilih menu terlebih dahulu.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return; // Berhenti di sini, tidak bisa lanjut
         }
 
-        // jika ada isinya, muncul pesan sukses
         JOptionPane.showMessageDialog(view, 
             "Pesanan Selesai!\nTotal item: " + pesanModel.getKeranjang().size() + " jenis.\nData siap dikirim ke Dapur dan Kasir.", 
             "Sukses", 
             JOptionPane.INFORMATION_MESSAGE);
-
-        /* * CATATAN UNTUK NANTI SAAT MERGE (GABUNG) DENGAN TIM:
-         * Kalau frame Anggota 4 (Keanggotaan) atau Anggota 3 (Pembayaran) sudah jadi,
-         * kodingannya akan ditulis di sini. Contohnya:
-         * * view.dispose(); // Tutup layar pemesanan ini
-         * new FramePembayaran(pesanModel.getKeranjang()).setVisible(true); // Buka layar temanmu
-         */
     }
 }

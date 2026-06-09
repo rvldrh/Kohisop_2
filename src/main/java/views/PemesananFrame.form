@@ -44,17 +44,17 @@
                           </Group>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="pnlTambahKeranjang1" alignment="0" max="32767" attributes="0"/>
                               <Component id="jScrollPane1" alignment="0" pref="0" max="32767" attributes="0"/>
                               <Component id="pnlTambahKeranjang" alignment="0" max="32767" attributes="0"/>
                               <Component id="pnlMakananKeranjang" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="pnlMinumanKeranjang" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="pnlMinumanKeranjang" max="32767" attributes="0"/>
-                          <Component id="jScrollPane5" alignment="0" min="-2" pref="351" max="-2" attributes="0"/>
+                          <Component id="jScrollPane5" min="-2" pref="360" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -91,7 +91,6 @@
               </Group>
               <EmptySpace min="-2" pref="134" max="-2" attributes="0"/>
               <Component id="pnlTotal" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
           </Group>
           <Component id="pnlSidebar" max="32767" attributes="0"/>
       </Group>
@@ -108,13 +107,13 @@
         <Component class="javax.swing.JTable" name="tblMenuMakanan">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="4" rowCount="5">
+              <Table columnCount="3" rowCount="5">
                 <Column editable="true" title="Kode" type="java.lang.Object"/>
                 <Column editable="true" title="Nama" type="java.lang.Object"/>
                 <Column editable="true" title="Harga" type="java.lang.Object"/>
-                <Column editable="true" title="Kategori" type="java.lang.Object"/>
               </Table>
             </Property>
+            <Property name="toolTipText" type="java.lang.String" value=""/>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
               <TableColumnModel selectionModel="0">
                 <Column maxWidth="-1" minWidth="-1" prefWidth="50" resizable="true">
@@ -128,11 +127,6 @@
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="70" resizable="true">
-                  <Title/>
-                  <Editor/>
-                  <Renderer/>
-                </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="90" resizable="true">
                   <Title/>
                   <Editor/>
                   <Renderer/>
@@ -156,11 +150,10 @@
         <Component class="javax.swing.JTable" name="tblMenuMinuman">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="4" rowCount="4">
+              <Table columnCount="3" rowCount="4">
                 <Column editable="true" title="Kode" type="java.lang.Object"/>
                 <Column editable="true" title="Nama" type="java.lang.Object"/>
                 <Column editable="true" title="Harga" type="java.lang.Object"/>
-                <Column editable="true" title="Kategori" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -176,11 +169,6 @@
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="70" resizable="true">
-                  <Title/>
-                  <Editor/>
-                  <Renderer/>
-                </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="90" resizable="true">
                   <Title/>
                   <Editor/>
                   <Renderer/>
@@ -377,7 +365,7 @@
         <Component class="javax.swing.JButton" name="btnOrder">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Segoe UI" size="12" style="1"/>
+              <Font name="Arial" size="12" style="1"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Order"/>
           </Properties>
@@ -388,7 +376,7 @@
         <Component class="javax.swing.JButton" name="btnMember">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Segoe UI" size="12" style="1"/>
+              <Font name="Arial" size="12" style="1"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Member"/>
           </Properties>
@@ -396,7 +384,7 @@
         <Component class="javax.swing.JButton" name="btnKitchen">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Segoe UI" size="12" style="1"/>
+              <Font name="Arial" size="12" style="1"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Kitchen"/>
           </Properties>
@@ -405,6 +393,9 @@
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="33" green="33" red="ff" type="rgb"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Arial" size="12" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -486,7 +477,7 @@
         <Component class="javax.swing.JLabel" name="lblMakananMenu">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Segoe UI" size="12" style="1"/>
+              <Font name="Arial" size="12" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -512,7 +503,7 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="lblMinumanMenu" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="316" max="32767" attributes="0"/>
+                  <EmptySpace pref="317" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -530,7 +521,7 @@
         <Component class="javax.swing.JLabel" name="lblMinumanMenu">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Segoe UI" size="12" style="1"/>
+              <Font name="Arial" size="12" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -574,7 +565,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Segoe UI" size="12" style="1"/>
+              <Font name="Arial" size="12" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -627,7 +618,7 @@
                       <Component id="txtKodeMenu" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btnTambah" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="14" max="32767" attributes="0"/>
+                  <EmptySpace pref="18" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -656,7 +647,7 @@
               <Color blue="cc" green="cc" red="0" type="rgb"/>
             </Property>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Segoe UI" size="12" style="1"/>
+              <Font name="Arial" size="12" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -744,7 +735,7 @@
         <Component class="javax.swing.JLabel" name="lblMinumanKeranjang">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Segoe UI" size="12" style="1"/>
+              <Font name="Arial" size="12" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -795,6 +786,9 @@
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="33" green="33" red="ff" type="rgb"/>
             </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Arial" size="12" style="1"/>
+            </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
@@ -806,6 +800,9 @@
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="66" green="ff" red="66" type="rgb"/>
             </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Arial" size="12" style="1"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Selesai &amp; Lanjut Pembayaran"/>
           </Properties>
           <Events>
@@ -815,7 +812,7 @@
         <Component class="javax.swing.JLabel" name="lblTotalHarga">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Segoe UI" size="18" style="1"/>
+              <Font name="Arial" size="18" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="66" green="66" red="0" type="rgb"/>
