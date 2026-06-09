@@ -75,33 +75,33 @@ public class PemesananFrame extends javax.swing.JFrame {
 
         tblMenuMakanan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Kode", "Nama", "Harga", "Kategori"
+                "Kode", "Nama", "Harga"
             }
         ));
+        tblMenuMakanan.setToolTipText("");
         jScrollPane3.setViewportView(tblMenuMakanan);
         if (tblMenuMakanan.getColumnModel().getColumnCount() > 0) {
             tblMenuMakanan.getColumnModel().getColumn(0).setPreferredWidth(50);
             tblMenuMakanan.getColumnModel().getColumn(1).setPreferredWidth(250);
             tblMenuMakanan.getColumnModel().getColumn(2).setPreferredWidth(70);
-            tblMenuMakanan.getColumnModel().getColumn(3).setPreferredWidth(90);
         }
 
         tblMenuMinuman.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Kode", "Nama", "Harga", "Kategori"
+                "Kode", "Nama", "Harga"
             }
         ));
         jScrollPane4.setViewportView(tblMenuMinuman);
@@ -109,7 +109,6 @@ public class PemesananFrame extends javax.swing.JFrame {
             tblMenuMinuman.getColumnModel().getColumn(0).setPreferredWidth(50);
             tblMenuMinuman.getColumnModel().getColumn(1).setPreferredWidth(250);
             tblMenuMinuman.getColumnModel().getColumn(2).setPreferredWidth(70);
-            tblMenuMinuman.getColumnModel().getColumn(3).setPreferredWidth(90);
         }
 
         tblKeranjangMakanan.setModel(new javax.swing.table.DefaultTableModel(
@@ -160,17 +159,18 @@ public class PemesananFrame extends javax.swing.JFrame {
         lblKohiSop.setForeground(new java.awt.Color(255, 255, 255));
         lblKohiSop.setText("KohiSop");
 
-        btnOrder.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnOrder.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         btnOrder.setText("Order");
         btnOrder.addActionListener(this::btnOrderActionPerformed);
 
-        btnMember.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnMember.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         btnMember.setText("Member");
 
-        btnKitchen.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnKitchen.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         btnKitchen.setText("Kitchen");
 
         btnLogout.setBackground(new java.awt.Color(255, 51, 51));
+        btnLogout.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         btnLogout.setForeground(new java.awt.Color(255, 255, 255));
         btnLogout.setText("Logout");
 
@@ -241,7 +241,7 @@ public class PemesananFrame extends javax.swing.JFrame {
 
         pnlMakananMenu.setBackground(new java.awt.Color(0, 102, 102));
 
-        lblMakananMenu.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblMakananMenu.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         lblMakananMenu.setForeground(new java.awt.Color(255, 255, 255));
         lblMakananMenu.setText("Makanan");
 
@@ -265,7 +265,7 @@ public class PemesananFrame extends javax.swing.JFrame {
         pnlMinumanMenu.setBackground(new java.awt.Color(0, 102, 102));
         pnlMinumanMenu.setPreferredSize(new java.awt.Dimension(65, 28));
 
-        lblMinumanMenu.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblMinumanMenu.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         lblMinumanMenu.setForeground(new java.awt.Color(255, 255, 255));
         lblMinumanMenu.setText("Minuman");
 
@@ -276,7 +276,7 @@ public class PemesananFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlMinumanMenuLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lblMinumanMenu)
-                .addContainerGap(316, Short.MAX_VALUE))
+                .addContainerGap(317, Short.MAX_VALUE))
         );
         pnlMinumanMenuLayout.setVerticalGroup(
             pnlMinumanMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -289,7 +289,7 @@ public class PemesananFrame extends javax.swing.JFrame {
         pnlTambahKeranjang1.setBackground(new java.awt.Color(0, 102, 102));
 
         lblTambahKeranjang.setBackground(new java.awt.Color(255, 255, 255));
-        lblTambahKeranjang.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblTambahKeranjang.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         lblTambahKeranjang.setForeground(new java.awt.Color(255, 255, 255));
         lblTambahKeranjang.setText("Tambah ke Keranjang");
 
@@ -319,7 +319,7 @@ public class PemesananFrame extends javax.swing.JFrame {
         lblKuantitas.setText("Kuantitas");
 
         btnTambah.setBackground(new java.awt.Color(0, 204, 204));
-        btnTambah.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnTambah.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         btnTambah.setForeground(new java.awt.Color(255, 255, 255));
         btnTambah.setText("Tambah");
         btnTambah.addActionListener(this::btnTambahActionPerformed);
@@ -354,7 +354,7 @@ public class PemesananFrame extends javax.swing.JFrame {
                     .addComponent(txtKuantitas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtKodeMenu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnTambah))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         pnlMakananKeranjang.setBackground(new java.awt.Color(0, 102, 102));
@@ -383,7 +383,7 @@ public class PemesananFrame extends javax.swing.JFrame {
 
         pnlMinumanKeranjang.setBackground(new java.awt.Color(0, 102, 102));
 
-        lblMinumanKeranjang.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblMinumanKeranjang.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         lblMinumanKeranjang.setForeground(new java.awt.Color(255, 255, 255));
         lblMinumanKeranjang.setText("Minuman");
 
@@ -407,14 +407,16 @@ public class PemesananFrame extends javax.swing.JFrame {
         pnlTotal.setBackground(new java.awt.Color(255, 255, 255));
 
         btnBatal.setBackground(new java.awt.Color(255, 51, 51));
+        btnBatal.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         btnBatal.setForeground(new java.awt.Color(255, 255, 255));
         btnBatal.setText("Batalkan");
 
         btnSelesai.setBackground(new java.awt.Color(102, 255, 102));
+        btnSelesai.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         btnSelesai.setText("Selesai & Lanjut Pembayaran");
         btnSelesai.addActionListener(this::btnSelesaiActionPerformed);
 
-        lblTotalHarga.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblTotalHarga.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         lblTotalHarga.setForeground(new java.awt.Color(0, 102, 102));
         lblTotalHarga.setText("Total Harga : Rp 0");
 
@@ -463,15 +465,15 @@ public class PemesananFrame extends javax.swing.JFrame {
                                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                                 .addComponent(pnlMinumanMenu, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 377, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(pnlTambahKeranjang1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                .addComponent(pnlTambahKeranjang, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(pnlMakananKeranjang, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(pnlMinumanKeranjang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(15, 15, 15))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(pnlTambahKeranjang1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                .addComponent(pnlTambahKeranjang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(pnlMakananKeranjang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(pnlMinumanKeranjang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -499,8 +501,7 @@ public class PemesananFrame extends javax.swing.JFrame {
                         .addGap(0, 0, 0)
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addGap(134, 134, 134)
-                .addComponent(pnlTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+                .addComponent(pnlTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addComponent(pnlSidebar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
