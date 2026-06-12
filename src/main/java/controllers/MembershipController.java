@@ -13,6 +13,7 @@ public class MembershipController {
     public void setView(MembershipFrame view) {
         this.view = view;
         refreshTable();
+
     }
 
     // ── Member CRUD ───────────────────────────────────────────────────────────
