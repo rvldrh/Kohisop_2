@@ -55,7 +55,7 @@ public class PemesananController {
     
     private void updateTabelKeranjang() {
         DefaultTableModel dtmMinuman = (DefaultTableModel) view.getTblKeranjangMinuman().getModel();
-        dtmMinuman.setRowCount(0); // Kosongkan dulu
+        dtmMinuman.setRowCount(0);
         
         for (CartItem item : pesanModel.getKeranjangMinumanTerurutHarga()) {
             dtmMinuman.addRow(new Object[]{
@@ -68,7 +68,7 @@ public class PemesananController {
         }
 
         DefaultTableModel dtmMakanan = (DefaultTableModel) view.getTblKeranjangMakanan().getModel();
-        dtmMakanan.setRowCount(0); // Kosongkan dulu
+        dtmMakanan.setRowCount(0);
         
         for (CartItem item : pesanModel.getKeranjangMakananTerurutHarga()) {
             dtmMakanan.addRow(new Object[]{
@@ -126,7 +126,7 @@ public class PemesananController {
             JOptionPane.showMessageDialog(view, "Kode menu tidak valid!", "Error", JOptionPane.ERROR_MESSAGE);
             view.getTxtKodeMenu().setText("");
             view.getTxtKodeMenu().requestFocus();
-            return; // Berhenti, jangan masukkan ke keranjang
+            return;
         }
 
         boolean sudahAdaDiKeranjang = false;
@@ -162,7 +162,7 @@ public class PemesananController {
     private void prosesSelesai() {
         if (pesanModel.getKeranjang().isEmpty()) {
             JOptionPane.showMessageDialog(view, "Keranjang masih kosong!\nSilakan pilih menu terlebih dahulu.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return; // Berhenti di sini, tidak bisa lanjut
+            return;
         }
 
         JOptionPane.showMessageDialog(view, 
