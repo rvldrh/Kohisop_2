@@ -14,6 +14,7 @@ public class MembershipController {
         this.view = view;
         refreshTable();
 
+        
     }
 
     // ── Member CRUD ───────────────────────────────────────────────────────────
