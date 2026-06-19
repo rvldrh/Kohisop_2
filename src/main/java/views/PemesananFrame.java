@@ -14,7 +14,7 @@ import javax.swing.JTextField;
  * @author Fiqih
  */
 public class PemesananFrame extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PemesananFrame.class.getName());
 
     /**
@@ -632,7 +632,9 @@ public class PemesananFrame extends javax.swing.JFrame {
     public JButton getBtnLogout() {
         return btnLogout;
     }
-    
-    
-    
+
+    public JButton getBtnKitchen() {
+        return btnKitchen;
+    }
+
 }
