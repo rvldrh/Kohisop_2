@@ -8,12 +8,15 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import models.User;
 
 /**
  *
  * @author Fiqih
  */
 public class PemesananFrame extends javax.swing.JFrame {
+    
+    private User userAktif;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PemesananFrame.class.getName());
 
@@ -22,6 +25,11 @@ public class PemesananFrame extends javax.swing.JFrame {
      */
     public PemesananFrame() {
         initComponents();
+    }
+    
+    public PemesananFrame(User user) {
+        initComponents();
+        this.userAktif = user; 
     }
 
     /**
@@ -173,6 +181,7 @@ public class PemesananFrame extends javax.swing.JFrame {
         btnLogout.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         btnLogout.setForeground(new java.awt.Color(255, 255, 255));
         btnLogout.setText("Logout");
+        btnLogout.addActionListener(this::btnLogoutActionPerformed);
 
         javax.swing.GroupLayout pnlSidebarLayout = new javax.swing.GroupLayout(pnlSidebar);
         pnlSidebar.setLayout(pnlSidebarLayout);
@@ -524,6 +533,25 @@ public class PemesananFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnOrderActionPerformed
 
+    private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
+        // TODO add your handling code here:
+        
+        int pilihan = javax.swing.JOptionPane.showConfirmDialog(this, 
+            "Apakah kamu yakin ingin keluar dari akun?", 
+            "Konfirmasi Logout", 
+            javax.swing.JOptionPane.YES_NO_OPTION,
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+
+        if (pilihan == javax.swing.JOptionPane.YES_OPTION) {
+            this.userAktif = null; 
+
+            new LoginFrame().setVisible(true);
+
+            this.dispose();
+        }
+        
+    }//GEN-LAST:event_btnLogoutActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -546,7 +574,19 @@ public class PemesananFrame extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new PemesananFrame().setVisible(true));
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                models.MenuModel menuModel = new models.MenuModel();
+                models.PemesananModel pesanModel = new models.PemesananModel(menuModel);
+                
+                views.PemesananFrame view = new views.PemesananFrame();
+                
+                new controllers.PemesananController(menuModel, pesanModel, view);
+                
+                view.setLocationRelativeTo(null);
+                view.setVisible(true);
+            }
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
