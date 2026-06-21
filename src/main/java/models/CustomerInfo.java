@@ -50,4 +50,8 @@ public class CustomerInfo {
     public int getPoinAkhir() {
         return poinAkhir;
     }
+    
+    public String getCurrency(){
+        return mataUang;
+    }
 }
