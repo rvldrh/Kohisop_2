@@ -12,7 +12,7 @@ import models.User;
  * @author Fiqih
  */
 public class LoginFrame extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LoginFrame.class.getName());
 
     /**
@@ -145,7 +145,7 @@ public class LoginFrame extends javax.swing.JFrame {
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
         // TODO add your handling code here:
-        
+
         String email = txtEmail.getText();
         String password = txtPassword.getText();
 
@@ -154,31 +154,34 @@ public class LoginFrame extends javax.swing.JFrame {
         User loggedInUser = auth.login(email, password);
 
         if (loggedInUser != null) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Selamat datang, " + loggedInUser.getFullName() + "!");
-        
-        models.MenuModel menuModel = new models.MenuModel();
-        models.PemesananModel pesanModel = new models.PemesananModel(menuModel);
-        
-        views.PemesananFrame view = new views.PemesananFrame();
-        
-        new controllers.PemesananController(menuModel, pesanModel, view);
-        
-        view.setLocationRelativeTo(null);
-        view.setVisible(true);
-        
-        this.dispose();
-        
-    } else {
-        javax.swing.JOptionPane.showMessageDialog(this, "Email atau Password salah!", "Login Gagal", javax.swing.JOptionPane.ERROR_MESSAGE);
-    }
+
+            models.Session.setCurrentUser(loggedInUser);
+
+            javax.swing.JOptionPane.showMessageDialog(this, "Selamat datang, " + loggedInUser.getFullName() + "!");
+
+            models.MenuModel menuModel = new models.MenuModel();
+            models.PemesananModel pesanModel = new models.PemesananModel(menuModel);
+
+            views.PemesananFrame view = new views.PemesananFrame();
+
+            new controllers.PemesananController(menuModel, pesanModel, view);
+
+            view.setLocationRelativeTo(null);
+            view.setVisible(true);
+
+            this.dispose();
+
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Email atau Password salah!", "Login Gagal", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void btnSignupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignupActionPerformed
         // TODO add your handling code here:
-        
+
         new RegisterFrame().setVisible(true);
         this.dispose();
-        
+
     }//GEN-LAST:event_btnSignupActionPerformed
 
     /**
