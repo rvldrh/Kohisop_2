@@ -487,4 +487,9 @@ public class MembershipFrame extends JFrame {
         tabs.setForeground(AppColors.UTAMA_GELAP);
         tabs.setBorder(new EmptyBorder(4, 4, 4, 4));
     }
+    
+    public static void main(String []args){
+        MembershipFrame member = new MembershipFrame();
+        member.setVisible(true);
+    }
 }
