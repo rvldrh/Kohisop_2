@@ -1,0 +1,3 @@
+Admin KohiSop,admin@kohisop.com,admin123
+rivaldo,rivaldo123@gmail.com,12345678
+rivaldo,r@gmail.com,123
