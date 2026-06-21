@@ -1,0 +1,13 @@
+=== ORDER ===
+User: rivaldo | r@gmail.com
+M1,Petemania Pizza,1,112.0
+A1,Caffe Latte,1,46.0
+TOTAL=158.0
+=================
+
+=== ORDER ===
+User: rivaldo | r@gmail.com
+M2,Mie Rebus Super Mario,2,70.0
+TOTAL=70.0
+=================
+
