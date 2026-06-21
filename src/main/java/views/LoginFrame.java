@@ -6,6 +6,9 @@ package views;
 
 import controllers.AuthController;
 import models.User;
+import models.*;
+import controllers.*;
+import javax.swing.*;
 
 /**
  *
@@ -150,29 +153,26 @@ public class LoginFrame extends javax.swing.JFrame {
         String password = txtPassword.getText();
 
         AuthController auth = new AuthController();
+        User user = auth.login(email, password);
 
-        User loggedInUser = auth.login(email, password);
+        if (user != null) {
+            MenuModel menuModel = new MenuModel();
+            PemesananModel pesanModel = new PemesananModel(menuModel);
+            PemesananFrame view = new PemesananFrame(user);
 
-        if (loggedInUser != null) {
-
-            models.Session.setCurrentUser(loggedInUser);
-
-            javax.swing.JOptionPane.showMessageDialog(this, "Selamat datang, " + loggedInUser.getFullName() + "!");
-
-            models.MenuModel menuModel = new models.MenuModel();
-            models.PemesananModel pesanModel = new models.PemesananModel(menuModel);
-
-            views.PemesananFrame view = new views.PemesananFrame();
-
-            new controllers.PemesananController(menuModel, pesanModel, view);
+            new PemesananController(
+                    menuModel,
+                    pesanModel,
+                    view,
+                    user
+            );
 
             view.setLocationRelativeTo(null);
             view.setVisible(true);
 
-            this.dispose();
-
+            this.dispose(); // tutup login
         } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "Email atau Password salah!", "Login Gagal", javax.swing.JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Login gagal");
         }
     }//GEN-LAST:event_btnLoginActionPerformed
 
