@@ -6,6 +6,8 @@ package controllers;
 import models.User;
 import java.util.HashMap;
 import java.util.Map;
+import models.UserRepository;
+import java.util.*;
 
 /**
  *
@@ -13,41 +15,45 @@ import java.util.Map;
  */
 public class AuthController {
     
-    private static Map<String, User> userDatabase = new HashMap<>();
-    
+      private UserRepository repo;
+
     public AuthController() {
-        if (userDatabase.isEmpty()) {
-            userDatabase.put("admin@kohisop.com", new User("Admin KohiSop", "admin@kohisop.com", "admin123"));
-        }
+        repo = new UserRepository();
     }
-    
+
     public boolean register(String fullName, String email, String password) {
-        if (userDatabase.containsKey(email)) {
-            System.out.println("Register Gagal: Email sudah digunakan!");
-            return false;
-        }
-    
+
         if (fullName.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            System.out.println("Register Gagal: Data tidak boleh kosong!");
+            System.out.println("Register gagal: data kosong");
             return false;
         }
-        
-        User newUser = new User(fullName, email, password);
-        userDatabase.put(email, newUser);
-        System.out.println("Register Sukses untuk: " + fullName);
+
+        List<User> users = repo.getAllUsers();
+
+        for (User u : users) {
+            if (u.getEmail().equalsIgnoreCase(email)) {
+                System.out.println("Email sudah digunakan");
+                return false;
+            }
+        }
+
+        User user = new User(fullName, email, password);
+        repo.saveUser(user);
+
+        System.out.println("Register berhasil");
         return true;
     }
-    
-    public User login(String email, String password) {
-        User user = userDatabase.get(email);
 
-        if (user != null && user.getPassword().equals(password)) {
-            System.out.println("Login Sukses! Selamat datang " + user.getFullName());
-            return user;
+    public User login(String email, String password) {
+        List<User> users = repo.getAllUsers();
+
+        for (User u : users) {
+            if (u.getEmail().equalsIgnoreCase(email)
+                    && u.getPassword().equals(password)) {
+                return u;
+            }
         }
-        
-        System.out.println("Login Gagal: Email atau Password salah!");
+
         return null;
     }
-        
 }
