@@ -17,3 +17,4 @@ M1,Petemania Pizza,1,112.0
 TOTAL=112.0
 =================
 
+rivaldo|M3|Ayam Bakar Goreng Rebus Spesial|1|72000.0|Makanan|72000.0|77760.0|Tunai
