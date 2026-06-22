@@ -12,6 +12,7 @@ import java.awt.event.*;
 public class MembershipFrame extends JFrame {
 
     private MembershipController controller;
+    
 
     // ── Tab: Membership ───────────────────────────────────────────────────────
     private JTextField txtNama, txtEmail, txtNoTelp, txtCariMember, txtKodeMemberDisplay;
@@ -35,10 +36,10 @@ public class MembershipFrame extends JFrame {
 
     private double subtotalAsli;
 
-    public MembershipFrame(User user, double subtotal) {
+    public MembershipFrame(User user, double subtotal, java.util.List<CartItem> cartItems) {
         this.userAktif = user;
         this.subtotal = subtotal;
-        this.controller = new MembershipController(user);
+        this.controller = new MembershipController(user, cartItems);
 
         setTitle("Membership & Payment — CaféBase");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -48,7 +49,7 @@ public class MembershipFrame extends JFrame {
 
         buildUI();
 
-        this.subtotalAsli = subtotal * 1000;
+        this.subtotalAsli = subtotal;
 
         txtSubtotal.setText(String.format("%,.0f", subtotalAsli));
         txtSubtotal.setEditable(false);

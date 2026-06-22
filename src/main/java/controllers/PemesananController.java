@@ -164,8 +164,14 @@ public class PemesananController {
 
         total *= 1000;
 
-        MembershipFrame membershipFrame = new MembershipFrame(userAktif, total);
+        MembershipFrame membershipFrame = new MembershipFrame(
+                userAktif,
+                total,
+                pesanModel.getKeranjang()
+        );
+        membershipFrame.setVisible(true);
         view.dispose();
+        
     }
 
     private double toRupiah(double ribuan) {

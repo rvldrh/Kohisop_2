@@ -10,10 +10,12 @@ public class MembershipController {
     private final PaymentModel paymentModel = new PaymentModel();
     private MembershipFrame view;
     private PaymentRepository paymentRepo = new PaymentRepository();
+    private java.util.List<CartItem> cartItems;
     private User userAktif;
 
-    public MembershipController(User user) {
+    public MembershipController(User user, java.util.List<CartItem> cartItems) {
         this.userAktif = user;
+        this.cartItems = cartItems;
     }
 
     public void setView(MembershipFrame view) {
@@ -97,6 +99,13 @@ public class MembershipController {
                 r.totalIDR,
                 metodeStr
         );
+        paymentRepo.saveFullOrder(
+                userAktif.getFullName(),
+                cartItems,
+                subtotal,
+                r.totalIDR,
+                metodeStr
+        );
 
         view.tampilkanRincianBayar(r);
 
@@ -105,6 +114,7 @@ public class MembershipController {
                 "Sukses",
                 JOptionPane.INFORMATION_MESSAGE
         );
+
     }
 
     // ── Utility ───────────────────────────────────────────────────────────────
