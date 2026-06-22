@@ -28,7 +28,7 @@ public class PemesananController {
         this.menuModel = menuModel;
         this.pesanModel = pesanModel;
         this.view = view;
-
+        
         updateTabelMenu();
 
         this.view.getBtnTambah().addActionListener(e -> prosesTambah());
@@ -186,5 +186,5 @@ public class PemesananController {
                 "Pesanan Selesai!\nTotal item: " + pesanModel.getKeranjang().size() + " jenis.\nData siap dikirim ke Dapur dan Kasir.",
                 "Sukses",
                 JOptionPane.INFORMATION_MESSAGE);
+        }
     }
-}
