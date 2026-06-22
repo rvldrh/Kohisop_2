@@ -49,4 +49,54 @@ public class OrderRepository {
             e.printStackTrace();
         }
     }
+
+    public void saveFullOrder(
+            User user,
+            List<CartItem> cart,
+            String statusMember,
+            String metodeBayar,
+            String currency,
+            double subtotal,
+            double tax,
+            double discount,
+            double adminFee,
+            double grandTotal
+    ) {
+        try (BufferedWriter bw = new BufferedWriter(
+                new FileWriter("orders.txt", true))) {
+
+            bw.write(String.format(
+                    "ORDER|%s|%s|%s|%s|%.0f|%.0f|%.0f|%.0f|%.0f",
+                    user.getFullName(),
+                    statusMember,
+                    metodeBayar,
+                    currency,
+                    subtotal,
+                    tax,
+                    discount,
+                    adminFee,
+                    grandTotal
+            ));
+            bw.newLine();
+
+            for (CartItem item : cart) {
+                Menu m = item.getMenu();
+                bw.write(String.format(
+                        "ITEM|%s|%s|%.0f|%d|%s",
+                        m.getKode(),
+                        m.getNama(),
+                        m.getHarga(),
+                        item.getKuantitas(),
+                        m.getKategori()
+                ));
+                bw.newLine();
+            }
+
+            bw.write("END");
+            bw.newLine();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

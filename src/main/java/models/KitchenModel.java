@@ -7,7 +7,6 @@ package models;
 import java.util.*;
 import java.io.*;
 
-
 /**
  *
  * @author rvldrh
@@ -33,13 +32,13 @@ public class KitchenModel {
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split("\\|");
 
-                if (parts.length >= 5) {
+                if (parts.length >= 9) {
                     orders.add(new KitchenOrder(
-                            parts[0],
-                            parts[1],
-                            Integer.parseInt(parts[2]),
-                            Double.parseDouble(parts[3]),
-                            parts[4]
+                            parts[1], // kode
+                            parts[2], // nama
+                            Integer.parseInt(parts[3]), // qty
+                            Double.parseDouble(parts[4]), // harga
+                            parts[5] // kategori
                     ));
                 }
             }

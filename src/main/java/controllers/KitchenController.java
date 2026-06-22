@@ -21,6 +21,23 @@ public class KitchenController {
     private User userAktif;
     private User user;
 
+    /** Overload dengan User — dipakai saat masuk dari ReceiptView */
+    public KitchenController(KitchenModel model, KitchenView view, User user) {
+        this.model     = model;
+        this.view      = view;
+        this.user      = user;
+        this.userAktif = user;
+
+        loadData();
+        view.getBtnOrder().addActionListener(e -> {
+            MenuModel menuModel = new MenuModel();
+            PemesananModel pesanModel = new PemesananModel(menuModel);
+            PemesananFrame orderView = new PemesananFrame();
+            new PemesananController(menuModel, pesanModel, orderView, this.user);
+            orderView.setVisible(true);
+        });
+    }
+
     public KitchenController(KitchenModel model, KitchenView view) {
         this.model = model;
         this.view = view;
@@ -55,8 +72,34 @@ public class KitchenController {
             }
         }
 
+        // Hitung jumlah customer unik dari orders.txt
+        int jumlahCustomer = hitungCustomerAktif();
+        view.setCustomerAktif(jumlahCustomer);
+
         renderFood(foodQueue);
         renderDrinks(drinkStack);
+    }
+
+    /**
+     * Baca orders.txt dan hitung jumlah baris (transaksi) unik berdasarkan
+     * username. Setiap 1 user yang bayar = 1 pelanggan aktif.
+     */
+    private int hitungCustomerAktif() {
+        java.util.Set<String> customers = new java.util.LinkedHashSet<>();
+        java.io.File f = new java.io.File("orders.txt");
+        if (!f.exists()) return 0;
+        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(f))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split("\\|");
+                if (parts.length >= 1 && !parts[0].isBlank()) {
+                    customers.add(parts[0]);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return customers.size();
     }
 
     private void renderFood(PriorityQueue<KitchenOrder> queue) {

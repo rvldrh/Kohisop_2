@@ -1,5 +1,12 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package models;
-
+/**
+ *
+ * @author Fiqih
+ */
 public class Member {
     private String kodeMember;
     private String nama;
@@ -8,26 +15,45 @@ public class Member {
     private int poin;
 
     public Member(String nama, String email, String noTelp) {
-        this.nama    = nama;
-        this.email   = email;
-        this.noTelp  = noTelp;
-        this.poin    = 0;
+        this.nama       = nama;
+        this.email      = email;
+        this.noTelp     = noTelp;
+        this.poin       = 0;
         this.kodeMember = generateKode();
     }
 
     private String generateKode() {
-        return "MBR" + (int)(Math.random() * 900000 + 100000);
+        // 6 karakter A-F dan 0-9
+        String chars = "ABCDEF0123456789";
+        StringBuilder sb = new StringBuilder(6);
+        for (int i = 0; i < 6; i++)
+            sb.append(chars.charAt((int)(Math.random() * chars.length())));
+        return sb.toString();
     }
 
-    public void tambahPoin(double totalBelanja) {
-        this.poin += (int)(totalBelanja / 10000);
+    /**
+     * Soal: 1 poin untuk setiap kelipatan 10 (dalam ribuan IDR).
+     * Karena harga sekarang IDR penuh: 1 poin per kelipatan Rp 10.000.
+     * Jika kode member mengandung 'A', poin digandakan.
+     */
+    public void tambahPoin(double totalBelanjaIDR) {
+        int poinBaru = (int)(totalBelanjaIDR / 10_000);
+        if (kodeMember.contains("A")) poinBaru *= 2;
+        this.poin += poinBaru;
     }
 
-    /** @return nilai diskon dalam rupiah, atau 0 jika poin kurang */
+    /**
+     * Soal: 1 poin = 2 IDR.
+     * @return nilai diskon dalam IDR, atau 0 jika poin tidak cukup.
+     *         Sisa poin tidak hangus.
+     */
     public double gunakanPoin(int jumlah) {
-        if (jumlah > poin) return 0;
+        if (jumlah > poin) {
+            // Gunakan semua poin yang ada
+            jumlah = poin;
+        }
         poin -= jumlah;
-        return (jumlah / 100.0) * 5000;
+        return jumlah * 2.0; // 1 poin = 2 IDR
     }
 
     // ── Getters ──────────────────────────────────────────────────────────────
@@ -41,6 +67,14 @@ public class Member {
     public void setNama(String nama)     { this.nama   = nama; }
     public void setEmail(String email)   { this.email  = email; }
     public void setNoTelp(String noTelp) { this.noTelp = noTelp; }
+
+    public static Member fromFile(String kode, String nama, String email,
+                                   String noTelp, int poin) {
+        Member m = new Member(nama, email, noTelp);
+        m.kodeMember = kode;
+        m.poin       = poin;
+        return m;
+    }
 
     @Override
     public String toString() {

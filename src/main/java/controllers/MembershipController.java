@@ -1,19 +1,44 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package controllers;
 
-import models.*;
+import models.MemberModel;
 import views.MembershipFrame;
 import javax.swing.JOptionPane;
+import java.util.List;
+import models.CartItem;
+import models.Currencies;
+import models.Currency;
+import models.EMoney;
+import models.Member;
+import models.PaymentMethod;
+import models.PaymentModel;
+import models.PaymentRepository;
+import models.QRIS;
+import models.Tunai;
+import models.User;
+/**
+ *
+ * @author Jiyyn
+ */
 
 public class MembershipController {
 
-    private final MemberModel memberModel = new MemberModel();
+    private final MemberModel memberModel   = new MemberModel();
     private final PaymentModel paymentModel = new PaymentModel();
     private MembershipFrame view;
-    private PaymentRepository paymentRepo = new PaymentRepository();
+    private PaymentRepository paymentRepo   = new PaymentRepository();
+    private List<CartItem> cartItems;
     private User userAktif;
 
-    public MembershipController(User user) {
-        this.userAktif = user;
+    // Disimpan setelah pembayaran berhasil, untuk di-pass ke ReceiptView & KitchenView
+    private PaymentModel.RincianBayar lastRincian;
+
+    public MembershipController(User user, List<CartItem> cartItems) {
+        this.userAktif  = user;
+        this.cartItems  = cartItems;
     }
 
     public void setView(MembershipFrame view) {
@@ -43,8 +68,8 @@ public class MembershipController {
             view.showPesan("Pilih member terlebih dahulu!", "Perhatian", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        int konfirmasi = view.showKonfirmasi("Hapus member " + kode + "?");
-        if (konfirmasi == JOptionPane.YES_OPTION) {
+        int k = view.showKonfirmasi("Hapus member " + kode + "?");
+        if (k == JOptionPane.YES_OPTION) {
             memberModel.hapus(kode);
             refreshTable();
             view.clearInputMember();
@@ -53,14 +78,9 @@ public class MembershipController {
 
     public void cariMember(String keyword) {
         Member m = memberModel.cariByKode(keyword);
-        if (m == null) {
-            m = memberModel.cariByNama(keyword);
-        }
-        if (m != null) {
-            view.isiFormMember(m);
-        } else {
-            view.showPesan("Member tidak ditemukan.", "Info", JOptionPane.INFORMATION_MESSAGE);
-        }
+        if (m == null) m = memberModel.cariByNama(keyword);
+        if (m != null) view.isiFormMember(m);
+        else view.showPesan("Member tidak ditemukan.", "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void refreshTable() {
@@ -68,20 +88,20 @@ public class MembershipController {
     }
 
     // ── Payment ───────────────────────────────────────────────────────────────
-    public void prosesPembayaran(double subtotal, String metodeStr,
-            String emoneNama, String kodeMember,
-            int poinDigunakan, String kodeMatauang) {
+    public void prosesPembayaran(String metodeStr, String emoneNama,
+                                  String kodeMember, int poinDigunakan,
+                                  String kodeMatauang) {
+
+        if (cartItems == null || cartItems.isEmpty()) {
+            view.showPesan("Tidak ada item di keranjang!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         PaymentMethod metode;
         switch (metodeStr) {
-            case "QRIS":
-                metode = new QRIS();
-                break;
-            case "E-Money":
-                metode = new EMoney(emoneNama);
-                break;
-            default:
-                metode = new Tunai();
-                break;
+            case "QRIS":    metode = new QRIS();           break;
+            case "E-Money": metode = new EMoney(emoneNama); break;
+            default:        metode = new Tunai();           break;
         }
 
         Member member = (kodeMember != null && !kodeMember.isBlank())
@@ -89,30 +109,36 @@ public class MembershipController {
 
         Currency currency = Currencies.get(kodeMatauang);
 
-        PaymentModel.RincianBayar r
-                = paymentModel.hitung(subtotal, metode, member, poinDigunakan, currency);
+        PaymentModel.RincianBayar r =
+                paymentModel.hitung(cartItems, metode, member, poinDigunakan, currency);
+
         paymentRepo.savePayment(
                 userAktif.getFullName(),
-                subtotal,
+                r.subtotalSebelumPajak,
+                r.totalIDR,
+                metodeStr
+        );
+        paymentRepo.saveFullOrder(
+                userAktif.getFullName(),
+                cartItems,
+                r.subtotalSebelumPajak,
                 r.totalIDR,
                 metodeStr
         );
 
+        this.lastRincian = r;
+
+        refreshTable();
         view.tampilkanRincianBayar(r);
-
-        view.showPesan(
-                "Pembayaran berhasil disimpan!",
-                "Sukses",
-                JOptionPane.INFORMATION_MESSAGE
-        );
+        // Simpan perubahan poin member ke file
+        memberModel.simpanPerubahan();
+        // Tampilkan dialog sukses, lalu navigasi ke Receipt → Kitchen
+        view.showPesan("Pembayaran berhasil! Silakan lihat struk.", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        view.onPembayaranBerhasil(r, cartItems, userAktif);
     }
 
-    // ── Utility ───────────────────────────────────────────────────────────────
-    public Member getMemberByKode(String kode) {
-        return memberModel.cariByKode(kode);
-    }
-
-    public MemberModel getMemberModel() {
-        return memberModel;
-    }
+    public Member getMemberByKode(String kode) { return memberModel.cariByKode(kode); }
+    public MemberModel getMemberModel()         { return memberModel; }
+    public List<CartItem> getCartItems()        { return cartItems; }
+    public PaymentModel.RincianBayar getLastRincian() { return lastRincian; }
 }
