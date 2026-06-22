@@ -28,38 +28,22 @@ public class OrderRepository {
         }
     }
 
-    public void saveOrder(User user, List<CartItem> keranjang, double total) {
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH, true));
+    public void saveOrder(User user, List<CartItem> items, double total) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter("orders.txt", true))) {
 
-            bw.write("=== ORDER ===");
-            bw.newLine();
+            pw.println("===== ORDER =====");
+            pw.println("User: " + user.getFullName());
 
-            if (user != null) {
-                bw.write("User: " + user.getFullName() + " | " + user.getEmail());
-            } else {
-                bw.write("User: Guest");
-            }
-
-            bw.newLine();
-
-            for (CartItem item : keranjang) {
-                bw.write(
-                        item.getMenu().getKode() + ","
-                        + item.getMenu().getNama() + ","
-                        + item.getKuantitas() + ","
-                        + item.getSubtotal()
+            for (CartItem item : items) {
+                pw.println(
+                        item.getMenu().getNama()
+                        + " x" + item.getKuantitas()
+                        + " = Rp " + String.format("%,.0f", item.getSubtotal() * 1000)
                 );
-                bw.newLine();
             }
 
-            bw.write("TOTAL=" + total);
-            bw.newLine();
-            bw.write("=================");
-            bw.newLine();
-            bw.newLine();
-
-            bw.close();
+            pw.println("TOTAL: Rp " + String.format("%,.0f", total * 1000));
+            pw.println();
 
         } catch (IOException e) {
             e.printStackTrace();

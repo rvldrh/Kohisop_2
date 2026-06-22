@@ -11,26 +11,35 @@ import java.awt.event.*;
 
 public class MembershipFrame extends JFrame {
 
-    private final MembershipController controller = new MembershipController();
+    private MembershipController controller;
 
     // ── Tab: Membership ───────────────────────────────────────────────────────
     private JTextField txtNama, txtEmail, txtNoTelp, txtCariMember, txtKodeMemberDisplay;
-    private JTable     tblMember;
+    private JTable tblMember;
     private DefaultTableModel tblMemberModel;
     private String selectedKode = null;
 
     // ── Tab: Pembayaran ───────────────────────────────────────────────────────
-    private JTextField   txtSubtotal, txtKodeMemberBayar, txtPoinDigunakan;
+    private JTextField txtSubtotal, txtKodeMemberBayar, txtPoinDigunakan;
     private JComboBox<String> cbMetode, cbEMoney, cbMataUang;
-    private JTextArea    txtHasil;
-    private JLabel       lblPoinInfo;
+    private JTextArea txtHasil;
+    private JLabel lblPoinInfo;
 
     // ── Tab: Konversi ─────────────────────────────────────────────────────────
-    private JTextField   txtNilaiKonversi;
+    private JTextField txtNilaiKonversi;
     private JComboBox<String> cbDari, cbKe;
-    private JLabel       lblHasilKonversi;
+    private JLabel lblHasilKonversi;
 
-    public MembershipFrame() {
+    private User userAktif;
+    private double subtotal;
+
+    private double subtotalAsli;
+
+    public MembershipFrame(User user, double subtotal) {
+        this.userAktif = user;
+        this.subtotal = subtotal;
+        this.controller = new MembershipController(user);
+
         setTitle("Membership & Payment — CaféBase");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(820, 620);
@@ -38,11 +47,16 @@ public class MembershipFrame extends JFrame {
         setFont(AppColors.FONT_NORMAL);
 
         buildUI();
+
+        this.subtotalAsli = subtotal * 1000;
+
+        txtSubtotal.setText(String.format("%,.0f", subtotalAsli));
+        txtSubtotal.setEditable(false);
+
         controller.setView(this);
     }
 
     // ── Build UI ──────────────────────────────────────────────────────────────
-
     private void buildUI() {
         // Header
         JPanel header = buildHeader();
@@ -54,9 +68,9 @@ public class MembershipFrame extends JFrame {
         tabs.setBackground(AppColors.BG_UTAMA);
         styleTabPane(tabs);
 
-        tabs.addTab("👥 Membership",  buildTabMembership());
-        tabs.addTab("💳 Pembayaran",  buildTabPembayaran());
-        tabs.addTab("💱 Konversi",    buildTabKonversi());
+        tabs.addTab("👥 Membership", buildTabMembership());
+        tabs.addTab("💳 Pembayaran", buildTabPembayaran());
+        tabs.addTab("💱 Konversi", buildTabKonversi());
 
         add(tabs, BorderLayout.CENTER);
         getContentPane().setBackground(AppColors.BG_UTAMA);
@@ -74,17 +88,18 @@ public class MembershipFrame extends JFrame {
         JButton btnLogout = styledButton("🔓 Logout", AppColors.BTN_LOGOUT, AppColors.TEKS_GELAP);
         btnLogout.addActionListener(e -> {
             int ok = JOptionPane.showConfirmDialog(this,
-                "Yakin ingin logout?", "Logout", JOptionPane.YES_NO_OPTION);
-            if (ok == JOptionPane.YES_OPTION) System.exit(0);
+                    "Yakin ingin logout?", "Logout", JOptionPane.YES_NO_OPTION);
+            if (ok == JOptionPane.YES_OPTION) {
+                System.exit(0);
+            }
         });
 
-        p.add(title,     BorderLayout.WEST);
+        p.add(title, BorderLayout.WEST);
         p.add(btnLogout, BorderLayout.EAST);
         return p;
     }
 
     // ── TAB MEMBERSHIP ────────────────────────────────────────────────────────
-
     private JPanel buildTabMembership() {
         JPanel p = new JPanel(new BorderLayout(10, 10));
         p.setBackground(AppColors.BG_UTAMA);
@@ -109,21 +124,21 @@ public class MembershipFrame extends JFrame {
         form.setBorder(titledBorder("Data Member"));
 
         GridBagConstraints g = new GridBagConstraints();
-        g.insets  = new Insets(5, 8, 5, 8);
-        g.anchor  = GridBagConstraints.WEST;
-        g.fill    = GridBagConstraints.HORIZONTAL;
+        g.insets = new Insets(5, 8, 5, 8);
+        g.anchor = GridBagConstraints.WEST;
+        g.fill = GridBagConstraints.HORIZONTAL;
 
-        txtNama   = styledField(20);
-        txtEmail  = styledField(20);
+        txtNama = styledField(20);
+        txtEmail = styledField(20);
         txtNoTelp = styledField(20);
         txtCariMember = styledField(15);
         txtKodeMemberDisplay = styledField(15);
         txtKodeMemberDisplay.setEditable(false);
         txtKodeMemberDisplay.setBackground(new Color(220, 240, 240));
 
-        addFormRow(form, g, "Nama",        txtNama,              0);
-        addFormRow(form, g, "Email",       txtEmail,             1);
-        addFormRow(form, g, "No. Telp",    txtNoTelp,            2);
+        addFormRow(form, g, "Nama", txtNama, 0);
+        addFormRow(form, g, "Email", txtEmail, 1);
+        addFormRow(form, g, "No. Telp", txtNoTelp, 2);
         addFormRow(form, g, "Kode Member", txtKodeMemberDisplay, 3);
 
         // Panel cari
@@ -135,7 +150,9 @@ public class MembershipFrame extends JFrame {
         btnCari.addActionListener(e -> controller.cariMember(txtCariMember.getText().trim()));
         cariPanel.add(btnCari);
 
-        g.gridx = 0; g.gridy = 4; g.gridwidth = 2;
+        g.gridx = 0;
+        g.gridy = 4;
+        g.gridwidth = 2;
         form.add(cariPanel, g);
 
         // Panel tombol aksi
@@ -143,25 +160,30 @@ public class MembershipFrame extends JFrame {
         btnPanel.setBackground(AppColors.BG_PANEL);
 
         JButton btnTambah = styledButton("➕ Tambah Member", AppColors.BTN_TAMBAH, AppColors.TEKS_GELAP);
-        JButton btnHapus  = styledButton("🗑 Hapus",         AppColors.BTN_BATAL,  Color.WHITE);
-        JButton btnBatal  = styledButton("✖ Batal",          AppColors.BTN_BATAL,  Color.WHITE);
-        JButton btnReset  = styledButton("🔄 Reset",          AppColors.UTAMA,      Color.WHITE);
+        JButton btnHapus = styledButton("🗑 Hapus", AppColors.BTN_BATAL, Color.WHITE);
+        JButton btnBatal = styledButton("✖ Batal", AppColors.BTN_BATAL, Color.WHITE);
+        JButton btnReset = styledButton("🔄 Reset", AppColors.UTAMA, Color.WHITE);
 
         btnTambah.addActionListener(e -> controller.tambahMember(
-            txtNama.getText().trim(),
-            txtEmail.getText().trim(),
-            txtNoTelp.getText().trim()
+                txtNama.getText().trim(),
+                txtEmail.getText().trim(),
+                txtNoTelp.getText().trim()
         ));
         btnHapus.addActionListener(e -> controller.hapusMember(selectedKode));
         btnBatal.addActionListener(e -> clearInputMember());
-        btnReset.addActionListener(e -> { clearInputMember(); selectedKode = null; });
+        btnReset.addActionListener(e -> {
+            clearInputMember();
+            selectedKode = null;
+        });
 
         btnPanel.add(btnTambah);
         btnPanel.add(btnHapus);
         btnPanel.add(btnBatal);
         btnPanel.add(btnReset);
 
-        g.gridx = 0; g.gridy = 5; g.gridwidth = 2;
+        g.gridx = 0;
+        g.gridy = 5;
+        g.gridwidth = 2;
         form.add(btnPanel, g);
 
         outer.add(form, BorderLayout.CENTER);
@@ -170,7 +192,9 @@ public class MembershipFrame extends JFrame {
 
     private JScrollPane buildTableMember() {
         tblMemberModel = new DefaultTableModel(MemberModel.TABLE_COLUMNS, 0) {
-            public boolean isCellEditable(int r, int c) { return false; }
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
         tblMember = new JTable(tblMemberModel);
         styleTable(tblMember);
@@ -194,7 +218,6 @@ public class MembershipFrame extends JFrame {
     }
 
     // ── TAB PEMBAYARAN ────────────────────────────────────────────────────────
-
     private JPanel buildTabPembayaran() {
         JPanel p = new JPanel(new BorderLayout(10, 10));
         p.setBackground(AppColors.BG_UTAMA);
@@ -207,15 +230,15 @@ public class MembershipFrame extends JFrame {
         GridBagConstraints g = new GridBagConstraints();
         g.insets = new Insets(6, 8, 6, 8);
         g.anchor = GridBagConstraints.WEST;
-        g.fill   = GridBagConstraints.HORIZONTAL;
+        g.fill = GridBagConstraints.HORIZONTAL;
 
-        txtSubtotal       = styledField(18);
+        txtSubtotal = styledField(18);
         txtKodeMemberBayar = styledField(18);
-        txtPoinDigunakan  = styledField(18);
+        txtPoinDigunakan = styledField(18);
         txtPoinDigunakan.setText("0");
 
-        cbMetode  = styledCombo(new String[]{"Tunai","QRIS","E-Money"});
-        cbEMoney  = styledCombo(new String[]{"GoPay","OVO","Dana","ShopeePay"});
+        cbMetode = styledCombo(new String[]{"Tunai", "QRIS", "E-Money"});
+        cbEMoney = styledCombo(new String[]{"GoPay", "OVO", "Dana", "ShopeePay"});
         cbMataUang = styledCombo(Currencies.KODE_LIST);
         lblPoinInfo = label("Poin tersedia: -");
 
@@ -229,29 +252,32 @@ public class MembershipFrame extends JFrame {
             public void focusLost(FocusEvent e) {
                 Member m = controller.getMemberByKode(txtKodeMemberBayar.getText().trim());
                 lblPoinInfo.setText(m != null
-                    ? "Poin tersedia: " + m.getPoin() : "Member tidak ditemukan");
+                        ? "Poin tersedia: " + m.getPoin() : "Member tidak ditemukan");
             }
         });
 
-        addFormRow(form, g, "Subtotal (Rp)",   txtSubtotal,        0);
-        addFormRow(form, g, "Metode",          cbMetode,           1);
-        addFormRow(form, g, "E-Money",         cbEMoney,           2);
-        addFormRow(form, g, "Kode Member",     txtKodeMemberBayar, 3);
-        addFormRow(form, g, "",                lblPoinInfo,        4);
-        addFormRow(form, g, "Poin Digunakan",  txtPoinDigunakan,   5);
-        addFormRow(form, g, "Mata Uang",       cbMataUang,         6);
+        addFormRow(form, g, "Subtotal (Rp)", txtSubtotal, 0);
+        addFormRow(form, g, "Metode", cbMetode, 1);
+        addFormRow(form, g, "E-Money", cbEMoney, 2);
+        addFormRow(form, g, "Kode Member", txtKodeMemberBayar, 3);
+        addFormRow(form, g, "", lblPoinInfo, 4);
+        addFormRow(form, g, "Poin Digunakan", txtPoinDigunakan, 5);
+        addFormRow(form, g, "Mata Uang", cbMataUang, 6);
 
-        JButton btnBayar  = styledButton("✅ Proses Pembayaran", AppColors.BTN_SELESAI, AppColors.TEKS_GELAP);
-        JButton btnBatalB = styledButton("✖ Batal",              AppColors.BTN_BATAL,   Color.WHITE);
+        JButton btnBayar = styledButton("✅ Proses Pembayaran", AppColors.BTN_SELESAI, AppColors.TEKS_GELAP);
+        JButton btnBatalB = styledButton("✖ Batal", AppColors.BTN_BATAL, Color.WHITE);
 
         btnBayar.addActionListener(e -> prosesKlikBayar());
         btnBatalB.addActionListener(e -> resetFormBayar());
 
         JPanel btnRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 4));
         btnRow.setBackground(AppColors.BG_PANEL);
-        btnRow.add(btnBayar); btnRow.add(btnBatalB);
+        btnRow.add(btnBayar);
+        btnRow.add(btnBatalB);
 
-        g.gridx = 0; g.gridy = 7; g.gridwidth = 2;
+        g.gridx = 0;
+        g.gridy = 7;
+        g.gridwidth = 2;
         form.add(btnRow, g);
 
         // Hasil kanan
@@ -276,10 +302,10 @@ public class MembershipFrame extends JFrame {
     private void prosesKlikBayar() {
         try {
             double subtotal = Double.parseDouble(txtSubtotal.getText().trim());
-            String metode   = cbMetode.getSelectedItem().toString();
-            String emoney   = cbEMoney.getSelectedItem().toString();
-            String kodeMbr  = txtKodeMemberBayar.getText().trim();
-            int poin        = Integer.parseInt(txtPoinDigunakan.getText().trim());
+            String metode = cbMetode.getSelectedItem().toString();
+            String emoney = cbEMoney.getSelectedItem().toString();
+            String kodeMbr = txtKodeMemberBayar.getText().trim();
+            int poin = Integer.parseInt(txtPoinDigunakan.getText().trim());
             String matauang = cbMataUang.getSelectedItem().toString();
             controller.prosesPembayaran(subtotal, metode, emoney, kodeMbr, poin, matauang);
         } catch (NumberFormatException ex) {
@@ -297,7 +323,6 @@ public class MembershipFrame extends JFrame {
     }
 
     // ── TAB KONVERSI ──────────────────────────────────────────────────────────
-
     private JPanel buildTabKonversi() {
         JPanel p = new JPanel(new GridBagLayout());
         p.setBackground(AppColors.BG_UTAMA);
@@ -310,25 +335,27 @@ public class MembershipFrame extends JFrame {
         GridBagConstraints g = new GridBagConstraints();
         g.insets = new Insets(8, 10, 8, 10);
         g.anchor = GridBagConstraints.WEST;
-        g.fill   = GridBagConstraints.HORIZONTAL;
+        g.fill = GridBagConstraints.HORIZONTAL;
 
         txtNilaiKonversi = styledField(15);
         cbDari = styledCombo(Currencies.KODE_LIST);
-        cbKe   = styledCombo(Currencies.KODE_LIST);
+        cbKe = styledCombo(Currencies.KODE_LIST);
         cbKe.setSelectedIndex(1);
         lblHasilKonversi = label("Hasil konversi muncul di sini");
         lblHasilKonversi.setFont(new Font("Arial", Font.BOLD, 15));
         lblHasilKonversi.setForeground(AppColors.UTAMA);
 
-        addFormRow(card, g, "Nilai",     txtNilaiKonversi, 0);
-        addFormRow(card, g, "Dari",      cbDari,           1);
-        addFormRow(card, g, "Ke",        cbKe,             2);
-        addFormRow(card, g, "Hasil",     lblHasilKonversi, 3);
+        addFormRow(card, g, "Nilai", txtNilaiKonversi, 0);
+        addFormRow(card, g, "Dari", cbDari, 1);
+        addFormRow(card, g, "Ke", cbKe, 2);
+        addFormRow(card, g, "Hasil", lblHasilKonversi, 3);
 
         JButton btnKonversi = styledButton("🔄 Konversi", AppColors.BTN_TAMBAH, AppColors.TEKS_GELAP);
         btnKonversi.addActionListener(e -> prosesKonversi());
 
-        g.gridx = 0; g.gridy = 4; g.gridwidth = 2;
+        g.gridx = 0;
+        g.gridy = 4;
+        g.gridwidth = 2;
         card.add(btnKonversi, g);
 
         p.add(card);
@@ -339,17 +366,16 @@ public class MembershipFrame extends JFrame {
         try {
             double nilai = Double.parseDouble(txtNilaiKonversi.getText().trim());
             Currency dari = Currencies.get(cbDari.getSelectedItem().toString());
-            Currency ke   = Currencies.get(cbKe.getSelectedItem().toString());
-            double hasil  = ke.dariIDR(dari.keIDR(nilai));
+            Currency ke = Currencies.get(cbKe.getSelectedItem().toString());
+            double hasil = ke.dariIDR(dari.keIDR(nilai));
             lblHasilKonversi.setText(String.format("%.2f %s = %s %.4f",
-                nilai, dari.getKode(), ke.getSimbol(), hasil));
+                    nilai, dari.getKode(), ke.getSimbol(), hasil));
         } catch (NumberFormatException ex) {
             lblHasilKonversi.setText("Input tidak valid!");
         }
     }
 
     // ── Public API (dipanggil controller) ─────────────────────────────────────
-
     public void refreshTableMember(Object[][] data, String[] cols) {
         tblMemberModel.setDataVector(data, cols);
         styleTableHeader(tblMember);
@@ -375,23 +401,23 @@ public class MembershipFrame extends JFrame {
     public void tampilkanRincianBayar(PaymentModel.RincianBayar r) {
         String sep = "─".repeat(36);
         txtHasil.setText(String.format(
-            "  RINCIAN PEMBAYARAN\n%s\n" +
-            "  Metode      : %s\n" +
-            "  Subtotal    : Rp %,.0f\n" +
-            "  Admin Fee   : Rp %,.0f\n" +
-            "  Diskon Ch.  : Rp %,.0f\n" +
-            "  Diskon Poin : Rp %,.0f\n" +
-            "%s\n" +
-            "  TOTAL (IDR) : Rp %,.0f\n" +
-            "  TOTAL (%s)  : %s %.4f\n" +
-            "%s",
-            sep,
-            r.metodeName,
-            r.subtotal, r.adminFee, r.diskonChannel, r.diskonPoin,
-            sep,
-            r.totalIDR,
-            r.currencyKode, r.currencySimbol, r.totalConverted,
-            sep
+                "  RINCIAN PEMBAYARAN\n%s\n"
+                + "  Metode      : %s\n"
+                + "  Subtotal    : Rp %,.0f\n"
+                + "  Admin Fee   : Rp %,.0f\n"
+                + "  Diskon Ch.  : Rp %,.0f\n"
+                + "  Diskon Poin : Rp %,.0f\n"
+                + "%s\n"
+                + "  TOTAL (IDR) : Rp %,.0f\n"
+                + "  TOTAL (%s)  : %s %.4f\n"
+                + "%s",
+                sep,
+                r.metodeName,
+                r.subtotal, r.adminFee, r.diskonChannel, r.diskonPoin,
+                sep,
+                r.totalIDR,
+                r.currencyKode, r.currencySimbol, r.totalConverted,
+                sep
         ));
     }
 
@@ -401,11 +427,10 @@ public class MembershipFrame extends JFrame {
 
     public int showKonfirmasi(String msg) {
         return JOptionPane.showConfirmDialog(this, msg, "Konfirmasi",
-            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
 
     // ── UI Helpers ────────────────────────────────────────────────────────────
-
     private JButton styledButton(String text, Color bg, Color fg) {
         JButton b = new JButton(text);
         b.setFont(AppColors.FONT_BUTTON);
@@ -413,14 +438,19 @@ public class MembershipFrame extends JFrame {
         b.setForeground(fg);
         b.setFocusPainted(false);
         b.setBorder(new CompoundBorder(
-            new LineBorder(bg.darker(), 1, true),
-            new EmptyBorder(6, 14, 6, 14)
+                new LineBorder(bg.darker(), 1, true),
+                new EmptyBorder(6, 14, 6, 14)
         ));
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         b.setOpaque(true);
         b.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) { b.setBackground(bg.brighter()); }
-            public void mouseExited(MouseEvent e)  { b.setBackground(bg); }
+            public void mouseEntered(MouseEvent e) {
+                b.setBackground(bg.brighter());
+            }
+
+            public void mouseExited(MouseEvent e) {
+                b.setBackground(bg);
+            }
         });
         return b;
     }
@@ -429,8 +459,8 @@ public class MembershipFrame extends JFrame {
         JTextField f = new JTextField(cols);
         f.setFont(AppColors.FONT_NORMAL);
         f.setBorder(new CompoundBorder(
-            new LineBorder(AppColors.UTAMA, 1, true),
-            new EmptyBorder(4, 8, 4, 8)
+                new LineBorder(AppColors.UTAMA, 1, true),
+                new EmptyBorder(4, 8, 4, 8)
         ));
         return f;
     }
@@ -450,17 +480,21 @@ public class MembershipFrame extends JFrame {
 
     private TitledBorder titledBorder(String title) {
         TitledBorder b = BorderFactory.createTitledBorder(
-            new LineBorder(AppColors.UTAMA, 1, true), title);
+                new LineBorder(AppColors.UTAMA, 1, true), title);
         b.setTitleFont(AppColors.FONT_BOLD);
         b.setTitleColor(AppColors.UTAMA);
         return b;
     }
 
     private void addFormRow(JPanel p, GridBagConstraints g, String labelText,
-                             Component comp, int row) {
-        g.gridx = 0; g.gridy = row; g.gridwidth = 1; g.weightx = 0;
+            Component comp, int row) {
+        g.gridx = 0;
+        g.gridy = row;
+        g.gridwidth = 1;
+        g.weightx = 0;
         p.add(label(labelText), g);
-        g.gridx = 1; g.weightx = 1;
+        g.gridx = 1;
+        g.weightx = 1;
         p.add(comp, g);
     }
 
@@ -487,9 +521,5 @@ public class MembershipFrame extends JFrame {
         tabs.setForeground(AppColors.UTAMA_GELAP);
         tabs.setBorder(new EmptyBorder(4, 4, 4, 4));
     }
-    
-    public static void main(String []args){
-        MembershipFrame member = new MembershipFrame();
-        member.setVisible(true);
-    }
+
 }
