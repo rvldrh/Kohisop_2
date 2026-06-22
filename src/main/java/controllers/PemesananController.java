@@ -28,7 +28,7 @@ public class PemesananController {
     private User userAktif;
     private OrderRepository orderRepo;
 
-   public PemesananController(
+    public PemesananController(
             MenuModel menuModel,
             PemesananModel pesanModel,
             PemesananFrame view,
@@ -56,57 +56,57 @@ public class PemesananController {
     }
 
     private void updateTabelMenu() {
-        DefaultTableModel dtmMakanan =
-                (DefaultTableModel) view.getTblMenuMakanan().getModel();
+        DefaultTableModel dtmMakanan
+                = (DefaultTableModel) view.getTblMenuMakanan().getModel();
         dtmMakanan.setRowCount(0);
 
         for (Menu m : menuModel.getMenuMakananTerurut()) {
             dtmMakanan.addRow(new Object[]{
-                    m.getKode(),
-                    m.getNama(),
-                    m.getHarga()
+                m.getKode(),
+                m.getNama(),
+                formatRupiah(m.getHarga())
             });
         }
 
-        DefaultTableModel dtmMinuman =
-                (DefaultTableModel) view.getTblMenuMinuman().getModel();
+        DefaultTableModel dtmMinuman
+                = (DefaultTableModel) view.getTblMenuMinuman().getModel();
         dtmMinuman.setRowCount(0);
 
         for (Menu m : menuModel.getMenuMinumanTerurut()) {
             dtmMinuman.addRow(new Object[]{
-                    m.getKode(),
-                    m.getNama(),
-                    m.getHarga()
+                m.getKode(),
+                m.getNama(),
+                formatRupiah(m.getHarga())
             });
         }
     }
 
     private void updateTabelKeranjang() {
-        DefaultTableModel dtmMinuman =
-                (DefaultTableModel) view.getTblKeranjangMinuman().getModel();
+        DefaultTableModel dtmMinuman
+                = (DefaultTableModel) view.getTblKeranjangMinuman().getModel();
         dtmMinuman.setRowCount(0);
 
         for (CartItem item : pesanModel.getKeranjangMinumanTerurutHarga()) {
             dtmMinuman.addRow(new Object[]{
-                    item.getMenu().getKode(),
-                    item.getMenu().getNama(),
-                    item.getMenu().getHarga(),
-                    item.getKuantitas(),
-                    item.getSubtotal()
+                item.getMenu().getKode(),
+                item.getMenu().getNama(),
+                formatRupiah(item.getMenu().getHarga()),
+                item.getKuantitas(),
+                formatRupiah(item.getSubtotal())
             });
         }
 
-        DefaultTableModel dtmMakanan =
-                (DefaultTableModel) view.getTblKeranjangMakanan().getModel();
+        DefaultTableModel dtmMakanan
+                = (DefaultTableModel) view.getTblKeranjangMakanan().getModel();
         dtmMakanan.setRowCount(0);
 
         for (CartItem item : pesanModel.getKeranjangMakananTerurutHarga()) {
             dtmMakanan.addRow(new Object[]{
-                    item.getMenu().getKode(),
-                    item.getMenu().getNama(),
-                    item.getMenu().getHarga(),
-                    item.getKuantitas(),
-                    item.getSubtotal()
+                item.getMenu().getKode(),
+                item.getMenu().getNama(),
+                item.getMenu().getHarga(),
+                item.getKuantitas(),
+                item.getSubtotal()
             });
         }
 
@@ -116,7 +116,7 @@ public class PemesananController {
         }
 
         view.getLblTotalHarga()
-                .setText(String.format("Total Harga: Rp %,.0f", total));
+                .setText("Total Harga: " + formatRupiah(total));
     }
 
     private void prosesTambah() {
@@ -152,7 +152,7 @@ public class PemesananController {
         if (pesanModel.getKeranjang().isEmpty()) {
             JOptionPane.showMessageDialog(
                     view,
-                    "Keranjang masih kosong!"
+                    "Keranjang kosong!"
             );
             return;
         }
@@ -162,16 +162,18 @@ public class PemesananController {
             total += item.getSubtotal();
         }
 
-        // Persist order ke txt
-        orderRepo.saveOrder(
-                userAktif,
-                pesanModel.getKeranjang(),
-                total
-        );
+        total *= 1000;
 
-        JOptionPane.showMessageDialog(
-                view,
-                "Pesanan berhasil disimpan!"
-        );
+        MembershipFrame membershipFrame = new MembershipFrame(userAktif, total);
+        view.dispose();
+    }
+
+    private double toRupiah(double ribuan) {
+        return ribuan * 1000;
+    }
+
+    private String formatRupiah(double ribuan) {
+        double rupiah = ribuan * 1000;
+        return "Rp " + String.format("%,.0f", rupiah).replace(",", ".");
     }
 }
