@@ -35,6 +35,39 @@ public class KitchenController {
             PemesananFrame orderView = new PemesananFrame();
             new PemesananController(menuModel, pesanModel, orderView, this.user);
             orderView.setVisible(true);
+            
+            view.dispose();
+        });
+        
+        view.getBtnMember().addActionListener(e -> {
+            views.MembershipFrame memberView = new views.MembershipFrame(
+                this.userAktif, 
+                0.0, 
+                new java.util.ArrayList<models.CartItem>()
+            );
+
+            memberView.setLocationRelativeTo(null);
+            memberView.setVisible(true);
+
+            view.dispose();
+        });
+        
+        view.getBtnLogout().addActionListener(e -> {
+            int pilihan = javax.swing.JOptionPane.showConfirmDialog(
+                    view, 
+                    "Apakah kamu yakin ingin keluar dari akun?",
+                    "Konfirmasi Logout",
+                    javax.swing.JOptionPane.YES_NO_OPTION,
+                    javax.swing.JOptionPane.QUESTION_MESSAGE
+            );
+
+            if (pilihan == javax.swing.JOptionPane.YES_OPTION) {
+                views.LoginFrame loginView = new views.LoginFrame();
+                loginView.setLocationRelativeTo(null);
+                loginView.setVisible(true);
+
+                view.dispose();
+            }
         });
     }
 
@@ -51,6 +84,39 @@ public class KitchenController {
             new PemesananController(menuModel, pesanModel, orderView, user);
 
             orderView.setVisible(true);
+            
+            view.dispose();
+        });
+        
+                view.getBtnMember().addActionListener(e -> {
+            views.MembershipFrame memberView = new views.MembershipFrame(
+                this.user, 
+                0.0, 
+                new java.util.ArrayList<models.CartItem>()
+            );
+
+            memberView.setLocationRelativeTo(null);
+            memberView.setVisible(true);
+
+            view.dispose();
+        });
+                    
+                view.getBtnLogout().addActionListener(e -> {
+            int pilihan = javax.swing.JOptionPane.showConfirmDialog(
+                    view, 
+                    "Apakah kamu yakin ingin keluar dari akun?",
+                    "Konfirmasi Logout",
+                    javax.swing.JOptionPane.YES_NO_OPTION,
+                    javax.swing.JOptionPane.QUESTION_MESSAGE
+            );
+
+            if (pilihan == javax.swing.JOptionPane.YES_OPTION) {
+                views.LoginFrame loginView = new views.LoginFrame();
+                loginView.setLocationRelativeTo(null);
+                loginView.setVisible(true);
+
+                view.dispose();
+            }
         });
     }
 
