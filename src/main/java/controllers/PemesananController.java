@@ -11,9 +11,9 @@ import models.CartItem;
 import views.PemesananFrame;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
-import models.OrderRepository;
-import models.User;
-
+import models.KitchenModel;
+import controllers.*;
+import views.*;
 /**
  *
  * @author Fiqih
@@ -24,22 +24,11 @@ public class PemesananController {
     private PemesananModel pesanModel;
     private PemesananFrame view;
 
-    private OrderRepository orderRepo;
-    private User userAktif;
-
-    public PemesananController(
-            MenuModel menuModel,
-            PemesananModel pesanModel,
-            PemesananFrame view,
-            User user) {
-
+    public PemesananController(MenuModel menuModel, PemesananModel pesanModel, PemesananFrame view) {
         this.menuModel = menuModel;
         this.pesanModel = pesanModel;
         this.view = view;
-        this.userAktif = user;
         
-        this.orderRepo = new OrderRepository();
-
         updateTabelMenu();
 
         this.view.getBtnTambah().addActionListener(e -> prosesTambah());
@@ -50,6 +39,20 @@ public class PemesananController {
         });
 
         this.view.getBtnSelesai().addActionListener(e -> prosesSelesai());
+        view.getBtnKitchen().addActionListener(e -> {
+            KitchenModel model = new KitchenModel();
+            KitchenView kitchen = new KitchenView();
+
+            KitchenController kitchenC= new KitchenController(model, kitchen);
+
+            bukaKitchen();
+        });
+    }
+
+    private void bukaKitchen() {
+        views.KitchenView kitchenView = new views.KitchenView();
+        kitchenView.setLocationRelativeTo(null);
+        kitchenView.setVisible(true);
     }
 
     private void updateTabelMenu() {
@@ -175,34 +178,13 @@ public class PemesananController {
 
     private void prosesSelesai() {
         if (pesanModel.getKeranjang().isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    view,
-                    "Keranjang masih kosong!",
-                    "Peringatan",
-                    JOptionPane.WARNING_MESSAGE
-            );
+            JOptionPane.showMessageDialog(view, "Keranjang masih kosong!\nSilakan pilih menu terlebih dahulu.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        double total = 0;
-        for (CartItem item : pesanModel.getKeranjang()) {
-            total += item.getSubtotal();
-        }
-
-        orderRepo.saveOrder(
-                userAktif,
-                pesanModel.getKeranjang(),
-                total
-        );
-
-        JOptionPane.showMessageDialog(
-                view,
-                "Pesanan berhasil disimpan ke orders.txt",
+        JOptionPane.showMessageDialog(view,
+                "Pesanan Selesai!\nTotal item: " + pesanModel.getKeranjang().size() + " jenis.\nData siap dikirim ke Dapur dan Kasir.",
                 "Sukses",
-                JOptionPane.INFORMATION_MESSAGE
-        );
-
-        pesanModel.kosongkanKeranjang();
-        updateTabelKeranjang();
+                JOptionPane.INFORMATION_MESSAGE);
+        }
     }
-}

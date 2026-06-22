@@ -15,6 +15,7 @@ import models.User;
  * @author Fiqih
  */
 public class PemesananFrame extends javax.swing.JFrame {
+
     
     private User userAktif;
     
@@ -672,7 +673,9 @@ public class PemesananFrame extends javax.swing.JFrame {
     public JButton getBtnLogout() {
         return btnLogout;
     }
-    
-    
-    
+
+    public JButton getBtnKitchen() {
+        return btnKitchen;
+    }
+
 }
