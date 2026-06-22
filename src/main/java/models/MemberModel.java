@@ -1,19 +1,34 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package models;
 
 import java.util.LinkedList;
 import java.util.Iterator;
-
+/**
+ *
+ * @author Fiqih
+ */
 public class MemberModel {
-    private LinkedList<Member> daftar = new LinkedList<>();
+
+    private LinkedList<Member> daftar;
+    private final MemberRepository repo = new MemberRepository();
+
+    public MemberModel() {
+        // Load dari file saat inisialisasi
+        daftar = repo.loadAll();
+    }
 
     // ── CRUD ──────────────────────────────────────────────────────────────────
 
-    /** Tambah member baru; return null jika email duplikat */
+   
     public Member tambah(String nama, String email, String noTelp) {
         for (Member m : daftar)
             if (m.getEmail().equalsIgnoreCase(email)) return null;
         Member m = new Member(nama, email, noTelp);
         daftar.add(m);
+        repo.saveAll(daftar);   // simpan ke file
         return m;
     }
 
@@ -21,10 +36,16 @@ public class MemberModel {
         Iterator<Member> it = daftar.iterator();
         while (it.hasNext()) {
             if (it.next().getKodeMember().equalsIgnoreCase(kode)) {
-                it.remove(); return true;
+                it.remove();
+                repo.saveAll(daftar);   // simpan ke file
+                return true;
             }
         }
         return false;
+    }
+
+    public void simpanPerubahan() {
+        repo.saveAll(daftar);
     }
 
     public Member cariByKode(String kode) {

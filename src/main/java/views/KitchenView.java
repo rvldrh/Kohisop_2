@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package views; // Sesuaikan dengan nama package Anda di NetBeans
 
 import javax.swing.*;
@@ -5,6 +9,10 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import javax.swing.table.*;
 import java.awt.geom.RoundRectangle2D;
+/**
+ *
+ * @author rvldrh
+ */
 
 class SidebarButton extends JButton {
 

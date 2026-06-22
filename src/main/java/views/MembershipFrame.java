@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package views;
 
 import controllers.MembershipController;
@@ -8,6 +12,10 @@ import javax.swing.border.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
+/**
+ *
+ * @author Jiyyn
+ */
 
 public class MembershipFrame extends JFrame {
 
@@ -21,6 +29,7 @@ public class MembershipFrame extends JFrame {
 
     // ── Tab: Pembayaran ───────────────────────────────────────────────────────
     private JLabel lblSubtotalInfo;
+    private JLabel lblTotalPreview;  // preview total setelah pajak+diskon
     private JTextField txtKodeMemberBayar, txtPoinDigunakan;
     private JComboBox<String> cbMetode, cbEMoney, cbMataUang;
     private JTextArea txtHasil;
@@ -48,6 +57,8 @@ public class MembershipFrame extends JFrame {
 
         // Tampilkan subtotal di tab pembayaran (read-only)
         lblSubtotalInfo.setText("Subtotal: " + formatRupiah(subtotalIDR) + " (belum termasuk pajak)");
+        // Trigger preview awal
+        SwingUtilities.invokeLater(this::updateTotalPreview);
 
         controller.setView(this);
     }
@@ -204,6 +215,11 @@ public class MembershipFrame extends JFrame {
         lblSubtotalInfo.setFont(AppColors.FONT_BOLD);
         lblSubtotalInfo.setForeground(AppColors.UTAMA_GELAP);
 
+        // Preview total yang harus dibayar (update live)
+        lblTotalPreview = new JLabel("-");
+        lblTotalPreview.setFont(AppColors.FONT_BOLD);
+        lblTotalPreview.setForeground(new Color(180, 0, 0));
+
         txtKodeMemberBayar   = styledField(18);
         txtPoinDigunakan     = styledField(18);
         txtPoinDigunakan.setText("0");
@@ -213,7 +229,10 @@ public class MembershipFrame extends JFrame {
         cbMataUang = styledCombo(Currencies.KODE_LIST);
         lblPoinInfo = label("Poin tersedia: -");
 
-        cbMetode.addActionListener(e -> cbEMoney.setVisible("E-Money".equals(cbMetode.getSelectedItem())));
+        cbMetode.addActionListener(e -> {
+            cbEMoney.setVisible("E-Money".equals(cbMetode.getSelectedItem()));
+            updateTotalPreview();
+        });
         cbEMoney.setVisible(false);
 
         txtKodeMemberBayar.addFocusListener(new FocusAdapter() {
@@ -222,16 +241,24 @@ public class MembershipFrame extends JFrame {
                 lblPoinInfo.setText(m != null
                         ? "Poin tersedia: " + m.getPoin() + " (= Rp " + (m.getPoin() * 2) + ")"
                         : "Member tidak ditemukan");
+                updateTotalPreview();
             }
         });
 
-        addFormRow(form, g, "Subtotal Keranjang", lblSubtotalInfo,      0);
-        addFormRow(form, g, "Metode",             cbMetode,             1);
-        addFormRow(form, g, "E-Money",            cbEMoney,             2);
-        addFormRow(form, g, "Kode Member",        txtKodeMemberBayar,   3);
-        addFormRow(form, g, "",                   lblPoinInfo,          4);
-        addFormRow(form, g, "Poin Digunakan",     txtPoinDigunakan,     5);
-        addFormRow(form, g, "Mata Uang",          cbMataUang,           6);
+        txtPoinDigunakan.addFocusListener(new FocusAdapter() {
+            public void focusLost(FocusEvent e) { updateTotalPreview(); }
+        });
+
+        cbMataUang.addActionListener(e -> updateTotalPreview());
+
+        addFormRow(form, g, "Subtotal Keranjang", lblSubtotalInfo,  0);
+        addFormRow(form, g, "Metode",             cbMetode,         1);
+        addFormRow(form, g, "E-Money",            cbEMoney,         2);
+        addFormRow(form, g, "Kode Member",        txtKodeMemberBayar, 3);
+        addFormRow(form, g, "",                   lblPoinInfo,      4);
+        addFormRow(form, g, "Poin Digunakan",     txtPoinDigunakan, 5);
+        addFormRow(form, g, "Mata Uang",          cbMataUang,       6);
+        addFormRow(form, g, "Estimasi Total Bayar", lblTotalPreview, 7);
 
         JButton btnBayar  = styledButton("✅ Proses Pembayaran", AppColors.BTN_SELESAI, AppColors.TEKS_GELAP);
         JButton btnBatalB = styledButton("✖ Batal",              AppColors.BTN_BATAL,   Color.WHITE);
@@ -243,7 +270,7 @@ public class MembershipFrame extends JFrame {
         btnRow.setBackground(AppColors.BG_PANEL);
         btnRow.add(btnBayar); btnRow.add(btnBatalB);
 
-        g.gridx = 0; g.gridy = 7; g.gridwidth = 2;
+        g.gridx = 0; g.gridy = 8; g.gridwidth = 2;
         form.add(btnRow, g);
 
         txtHasil = new JTextArea(18, 30);
@@ -391,6 +418,43 @@ public class MembershipFrame extends JFrame {
         txtHasil.setText(sb.toString());
     }
 
+    /** Hitung ulang estimasi total bayar berdasarkan input saat ini */
+    private void updateTotalPreview() {
+        if (subtotalIDR <= 0 || lblTotalPreview == null) return;
+        try {
+            String metodeStr  = cbMetode.getSelectedItem().toString();
+            String emoney     = cbEMoney.getSelectedItem().toString();
+            String kodeMbr    = txtKodeMemberBayar.getText().trim();
+            String matauang   = cbMataUang.getSelectedItem().toString();
+            int poin = 0;
+            try { poin = Integer.parseInt(txtPoinDigunakan.getText().trim()); } catch (Exception ignored) {}
+
+            PaymentMethod metode;
+            switch (metodeStr) {
+                case "QRIS":    metode = new QRIS();            break;
+                case "E-Money": metode = new EMoney(emoney);    break;
+                default:        metode = new Tunai();            break;
+            }
+
+            Member member = (!kodeMbr.isBlank()) ? controller.getMemberByKode(kodeMbr) : null;
+            Currency currency = Currencies.get(matauang);
+
+            // Gunakan cartItems dari controller untuk kalkulasi pajak per-item
+            PaymentModel pm = new PaymentModel();
+            PaymentModel.RincianBayar r = pm.hitung(
+                controller.getCartItems(), metode, member, poin, currency
+            );
+
+            String teks = formatRupiah(r.totalIDR);
+            if (!"IDR".equals(r.currencyKode)) {
+                teks += "  (" + r.currencySimbol + String.format(" %.4f", r.totalConverted) + ")";
+            }
+            lblTotalPreview.setText(teks);
+        } catch (Exception ex) {
+            lblTotalPreview.setText("(tidak dapat dihitung)");
+        }
+    }
+
     public void showPesan(String msg, String judul, int type) {
         JOptionPane.showMessageDialog(this, msg, judul, type);
     }
@@ -398,6 +462,22 @@ public class MembershipFrame extends JFrame {
     public int showKonfirmasi(String msg) {
         return JOptionPane.showConfirmDialog(this, msg, "Konfirmasi",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+    }
+
+    /**
+     * Dipanggil oleh controller setelah pembayaran berhasil disimpan.
+     * Membuka ReceiptView yang sudah berisi data lengkap dari RincianBayar.
+     * ReceiptView kemudian menyediakan tombol untuk ke KitchenView.
+     */
+    public void onPembayaranBerhasil(PaymentModel.RincianBayar r,
+                                      java.util.List<CartItem> cartItems,
+                                      User userAktif) {
+        // Tutup MembershipFrame setelah JOptionPane ditutup user
+        SwingUtilities.invokeLater(() -> {
+            ReceiptView receiptView = new ReceiptView(r, cartItems, userAktif);
+            receiptView.setVisible(true);
+            this.dispose();
+        });
     }
 
     // ── UI Helpers ────────────────────────────────────────────────────────────

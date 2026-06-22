@@ -1,28 +1,53 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package views;
 
-import models.CustomerInfo;
-import models.ReceiptItem;
+import controllers.KitchenController;
+import models.Menu;
+import models.CartItem;
 
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
+import models.CustomerInfo;
+import models.KitchenModel;
+import models.PaymentModel;
+import models.ReceiptItem;
+import models.User;
+/**
+ *
+ * @author rvldrh
+ */
 
 public class ReceiptView extends javax.swing.JFrame {
 
     private JPanel itemsPanel;
     private JLabel lblSubtotal, lblTax, lblBeforeDiscount, lblDiscount, lblAdminFee, lblGrandTotal;
-    private JLabel lblNama, lblStatus, lblMetode, lblCurrency;
+    private JLabel lblNama, lblStatus, lblMetode, lblCurrency, lblPoin;
 
+    // ── Constructor lama (untuk ReceiptController / standalone test) ──────────
     public ReceiptView() {
-        setTitle("Receipt — KohiSop");
-        setSize(360, 720);
+        this(null, null, null);
+    }
+
+    // ── Constructor baru: dipanggil setelah pembayaran berhasil ──────────────
+    public ReceiptView(PaymentModel.RincianBayar rincian,
+                       List<CartItem> cartItems,
+                       User userAktif) {
+
+        setTitle("Struk Pembayaran — KohiSop");
+        setSize(400, 820);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         JPanel root = new JPanel(new BorderLayout());
         root.setBackground(new Color(240, 240, 240));
 
+        // ── Receipt card ─────────────────────────────────────────────────────
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(new Color(252, 250, 245));
@@ -55,8 +80,113 @@ public class ReceiptView extends javax.swing.JFrame {
 
         JScrollPane scroll = new JScrollPane(card);
         root.add(scroll, BorderLayout.CENTER);
+
+        // ── Bottom button panel ───────────────────────────────────────────────
+        JPanel bottomPanel = buildBottomPanel(rincian, cartItems, userAktif);
+        root.add(bottomPanel, BorderLayout.SOUTH);
+
         setContentPane(root);
+
+        // Isi data jika tersedia
+        if (rincian != null && cartItems != null) {
+            populateFromRincian(rincian, cartItems, userAktif);
+        }
     }
+
+    // ── Populate semua data dari RincianBayar + CartItems ───────────────────
+    private void populateFromRincian(PaymentModel.RincianBayar r,
+                                      List<CartItem> cartItems,
+                                      User userAktif) {
+        // Items — dikelompokkan: Makanan dulu, lalu Minuman
+        List<ReceiptItem> receiptItems = buildReceiptItems(cartItems);
+        setItems(receiptItems);
+
+        // Summary
+        setSummary(
+            r.subtotalSebelumPajak,
+            r.totalPajak,
+            r.diskonChannel + r.diskonPoin,
+            r.adminFee,
+            r.totalIDR
+        );
+
+        // Customer info
+        String namaUser = userAktif != null ? userAktif.getFullName() : "-";
+        String status   = (r.poinSebelum > 0 || r.poinDiperoleh > 0) ? "Member" : "Non-Member";
+        String metode   = r.metodeName;
+        String currency = r.currencyKode.equals("IDR")
+                ? "IDR"
+                : r.currencyKode + " (" + r.currencySimbol + String.format(" %.4f", r.totalConverted) + ")";
+
+        lblNama.setText(namaUser);
+        lblStatus.setText(status);
+        lblMetode.setText(metode);
+        lblCurrency.setText(currency);
+        lblPoin.setText("Poin: " + r.poinSebelum + " → +" + r.poinDiperoleh + " → " + r.poinSetelah);
+    }
+
+    // ── Bangun ReceiptItem dari CartItem (Makanan dulu, lalu Minuman) ────────
+    private List<ReceiptItem> buildReceiptItems(List<CartItem> cartItems) {
+        List<ReceiptItem> makanan  = new ArrayList<>();
+        List<ReceiptItem> minuman  = new ArrayList<>();
+
+        for (CartItem ci : cartItems) {
+            Menu m = ci.getMenu();
+            ReceiptItem ri = new ReceiptItem(
+                m.getKode(), m.getNama(), m.getKategori(),
+                ci.getKuantitas(), m.getHarga(), 0
+            );
+            if (m.getKategori().equalsIgnoreCase("Makanan")) {
+                makanan.add(ri);
+            } else {
+                minuman.add(ri);
+            }
+        }
+
+        List<ReceiptItem> all = new ArrayList<>();
+        all.addAll(makanan);
+        all.addAll(minuman);
+        return all;
+    }
+
+    // ── Bottom panel: tombol Kirim ke Dapur ──────────────────────────────────
+    private JPanel buildBottomPanel(PaymentModel.RincianBayar rincian,
+                                     List<CartItem> cartItems,
+                                     User userAktif) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 16, 12));
+        panel.setBackground(new Color(0, 102, 80));
+
+        JButton btnKitchen = new JButton("🍳 Kirim ke Dapur");
+        btnKitchen.setFont(new Font("Dialog", Font.BOLD, 14));
+        btnKitchen.setBackground(new Color(255, 200, 50));
+        btnKitchen.setForeground(new Color(30, 30, 30));
+        btnKitchen.setFocusPainted(false);
+        btnKitchen.setBorder(new CompoundBorder(
+            new LineBorder(new Color(200, 160, 0), 1, true),
+            new EmptyBorder(8, 20, 8, 20)
+        ));
+        btnKitchen.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        btnKitchen.addActionListener(e -> {
+            // Buka KitchenView, tutup ReceiptView
+            KitchenModel kitchenModel = new KitchenModel();
+            KitchenView kitchenView   = new KitchenView();
+            new KitchenController(kitchenModel, kitchenView, userAktif);
+            kitchenView.setVisible(true);
+            this.dispose();
+        });
+
+        // Jika dipanggil standalone (tanpa data), disable tombol
+        if (rincian == null) {
+            btnKitchen.setEnabled(false);
+            btnKitchen.setToolTipText("Hanya aktif setelah proses pembayaran");
+        }
+
+        panel.add(btnKitchen);
+        return panel;
+    }
+
+    // ── UI builder helpers ───────────────────────────────────────────────────
 
     private JPanel createHeader() {
         JPanel panel = new JPanel();
@@ -89,12 +219,12 @@ public class ReceiptView extends javax.swing.JFrame {
 
     private JPanel createSummary() {
         JPanel p = createKeyValuePanel();
-        lblSubtotal      = createValueLabel();
-        lblTax           = createValueLabel();
-        lblBeforeDiscount= createValueLabel();
-        lblDiscount      = createValueLabel(new Color(0, 140, 80));
-        lblAdminFee      = createValueLabel();
-        lblGrandTotal    = createValueLabel();
+        lblSubtotal       = createValueLabel();
+        lblTax            = createValueLabel();
+        lblBeforeDiscount = createValueLabel();
+        lblDiscount       = createValueLabel(new Color(0, 140, 80));
+        lblAdminFee       = createValueLabel();
+        lblGrandTotal     = createValueLabel();
 
         p.add(row("Subtotal (sebelum pajak)", lblSubtotal));
         p.add(row("Pajak",                    lblTax));
@@ -110,14 +240,17 @@ public class ReceiptView extends javax.swing.JFrame {
 
     private JPanel createCustomerInfo() {
         JPanel p = createKeyValuePanel();
-        lblNama    = createValueLabel();
-        lblStatus  = createValueLabel();
-        lblMetode  = createValueLabel();
-        lblCurrency= createValueLabel();
-        p.add(row("Nama",        lblNama));
-        p.add(row("Status",      lblStatus));
-        p.add(row("Metode bayar",lblMetode));
-        p.add(row("Mata uang",   lblCurrency));
+        lblNama     = createValueLabel();
+        lblStatus   = createValueLabel();
+        lblMetode   = createValueLabel();
+        lblCurrency = createValueLabel();
+        lblPoin     = createValueLabel(new Color(0, 100, 180));
+
+        p.add(row("Nama",         lblNama));
+        p.add(row("Status",       lblStatus));
+        p.add(row("Metode bayar", lblMetode));
+        p.add(row("Mata uang",    lblCurrency));
+        p.add(row("Poin",         lblPoin));
         return p;
     }
 
@@ -154,11 +287,22 @@ public class ReceiptView extends javax.swing.JFrame {
         return sep;
     }
 
-    // ===== METHODS UNTUK CONTROLLER =====
+    // ── Methods untuk ReceiptController (backward compat) ────────────────────
 
     public void setItems(List<ReceiptItem> items) {
         itemsPanel.removeAll();
+        String lastKategori = "";
         for (ReceiptItem item : items) {
+            // Label kategori separator
+            if (!item.getKategori().equals(lastKategori)) {
+                lastKategori = item.getKategori();
+                JLabel katLabel = new JLabel("── " + lastKategori.toUpperCase() + " ──");
+                katLabel.setFont(new Font("Dialog", Font.ITALIC, 11));
+                katLabel.setForeground(new Color(100, 100, 100));
+                katLabel.setBorder(new EmptyBorder(8, 0, 4, 0));
+                itemsPanel.add(katLabel);
+            }
+
             JPanel nameRow = new JPanel(new BorderLayout());
             nameRow.setBackground(new Color(252, 250, 245));
             JLabel nameLabel = new JLabel(item.getNama());
@@ -189,6 +333,7 @@ public class ReceiptView extends javax.swing.JFrame {
         lblStatus.setText(customer.getStatus());
         lblMetode.setText(customer.getMetodeBayar());
         lblCurrency.setText(customer.getCurrency());
+        if (lblPoin != null) lblPoin.setText("-");
     }
 
     public void setSummary(double subtotal, double tax, double discount,

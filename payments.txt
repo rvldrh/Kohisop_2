@@ -1,3 +1,5 @@
 rivaldo|112.0|112.0|Tunai
 rivaldo|112.0|112.0|Tunai
 rivaldo|72000.0|77760.0|Tunai
+rivaldo|58000.0|61850.0|Tunai
+rivaldo|18000.0|19980.0|Tunai

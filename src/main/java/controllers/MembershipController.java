@@ -1,9 +1,28 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package controllers;
 
-import models.*;
+import models.MemberModel;
 import views.MembershipFrame;
 import javax.swing.JOptionPane;
 import java.util.List;
+import models.CartItem;
+import models.Currencies;
+import models.Currency;
+import models.EMoney;
+import models.Member;
+import models.PaymentMethod;
+import models.PaymentModel;
+import models.PaymentRepository;
+import models.QRIS;
+import models.Tunai;
+import models.User;
+/**
+ *
+ * @author Jiyyn
+ */
 
 public class MembershipController {
 
@@ -13,6 +32,9 @@ public class MembershipController {
     private PaymentRepository paymentRepo   = new PaymentRepository();
     private List<CartItem> cartItems;
     private User userAktif;
+
+    // Disimpan setelah pembayaran berhasil, untuk di-pass ke ReceiptView & KitchenView
+    private PaymentModel.RincianBayar lastRincian;
 
     public MembershipController(User user, List<CartItem> cartItems) {
         this.userAktif  = user;
@@ -104,11 +126,19 @@ public class MembershipController {
                 metodeStr
         );
 
+        this.lastRincian = r;
+
         refreshTable();
         view.tampilkanRincianBayar(r);
-        view.showPesan("Pembayaran berhasil!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+        // Simpan perubahan poin member ke file
+        memberModel.simpanPerubahan();
+        // Tampilkan dialog sukses, lalu navigasi ke Receipt → Kitchen
+        view.showPesan("Pembayaran berhasil! Silakan lihat struk.", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        view.onPembayaranBerhasil(r, cartItems, userAktif);
     }
 
     public Member getMemberByKode(String kode) { return memberModel.cariByKode(kode); }
     public MemberModel getMemberModel()         { return memberModel; }
+    public List<CartItem> getCartItems()        { return cartItems; }
+    public PaymentModel.RincianBayar getLastRincian() { return lastRincian; }
 }

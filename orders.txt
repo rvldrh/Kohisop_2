@@ -18,3 +18,6 @@ TOTAL=112.0
 =================
 
 rivaldo|M3|Ayam Bakar Goreng Rebus Spesial|1|72000.0|Makanan|72000.0|77760.0|Tunai
+rivaldo|M2|Mie Rebus Super Mario|1|35000.0|Makanan|58000.0|61850.0|Tunai
+rivaldo|B1|Freshly Brewed Coffee|1|23000.0|Minuman|58000.0|61850.0|Tunai
+rivaldo|S3|Tempe Mendoan|1|18000.0|Makanan|18000.0|19980.0|Tunai

@@ -1,5 +1,12 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package models;
-
+/**
+ *
+ * @author Fiqih
+ */
 public class Member {
     private String kodeMember;
     private String nama;
@@ -60,6 +67,14 @@ public class Member {
     public void setNama(String nama)     { this.nama   = nama; }
     public void setEmail(String email)   { this.email  = email; }
     public void setNoTelp(String noTelp) { this.noTelp = noTelp; }
+
+    public static Member fromFile(String kode, String nama, String email,
+                                   String noTelp, int poin) {
+        Member m = new Member(nama, email, noTelp);
+        m.kodeMember = kode;
+        m.poin       = poin;
+        return m;
+    }
 
     @Override
     public String toString() {
