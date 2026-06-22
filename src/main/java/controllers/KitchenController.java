@@ -19,6 +19,7 @@ public class KitchenController {
     private KitchenModel model;
     private KitchenView view;
     private User userAktif;
+    private User user;
 
     public KitchenController(KitchenModel model, KitchenView view) {
         this.model = model;
@@ -30,7 +31,7 @@ public class KitchenController {
             PemesananModel pesanModel = new PemesananModel(menuModel);
             PemesananFrame orderView = new PemesananFrame();
 
-            new PemesananController(menuModel, pesanModel, orderView, userAktif);
+            new PemesananController(menuModel, pesanModel, orderView, user);
 
             orderView.setVisible(true);
         });
