@@ -19,7 +19,6 @@ public class MenuModel {
     }
 
     private void inisialisasiMenuBawaan() {
-        // Harga dalam IDR penuh (x1000)
         daftarMenu.add(new Menu("M1", "Petemania Pizza",                      112_000, "Makanan"));
         daftarMenu.add(new Menu("M2", "Mie Rebus Super Mario",                 35_000, "Makanan"));
         daftarMenu.add(new Menu("M3", "Ayam Bakar Goreng Rebus Spesial",       72_000, "Makanan"));
@@ -41,14 +40,16 @@ public class MenuModel {
         daftarMenu.add(new Menu("B3", "Cold Brew",                             44_000, "Minuman"));
     }
 
-    public ArrayList<Menu> getMenuTerurutKode() {
+    public ArrayList<Menu> getMenuTerurutHarga() {
         ArrayList<Menu> sortedMenu = new ArrayList<>(daftarMenu);
         Collections.sort(sortedMenu, (m1, m2) -> {
             boolean isMakanan1 = m1.getKategori().equalsIgnoreCase("Makanan");
             boolean isMakanan2 = m2.getKategori().equalsIgnoreCase("Makanan");
+            
             if (isMakanan1 && !isMakanan2) return -1;
             if (!isMakanan1 && isMakanan2) return 1;
-            return m1.getKode().compareToIgnoreCase(m2.getKode());
+            
+            return Double.compare(m1.getHarga(), m2.getHarga());
         });
         return sortedMenu;
     }
@@ -63,7 +64,8 @@ public class MenuModel {
         ArrayList<Menu> makanan = new ArrayList<>();
         for (Menu m : daftarMenu)
             if (m.getKategori().equalsIgnoreCase("Makanan")) makanan.add(m);
-        Collections.sort(makanan, (m1, m2) -> m1.getKode().compareToIgnoreCase(m2.getKode()));
+        
+        Collections.sort(makanan, (m1, m2) -> Double.compare(m1.getHarga(), m2.getHarga()));
         return makanan;
     }
 
@@ -71,7 +73,8 @@ public class MenuModel {
         ArrayList<Menu> minuman = new ArrayList<>();
         for (Menu m : daftarMenu)
             if (m.getKategori().equalsIgnoreCase("Minuman")) minuman.add(m);
-        Collections.sort(minuman, (m1, m2) -> m1.getKode().compareToIgnoreCase(m2.getKode()));
+        
+        Collections.sort(minuman, (m1, m2) -> Double.compare(m1.getHarga(), m2.getHarga()));
         return minuman;
     }
     
