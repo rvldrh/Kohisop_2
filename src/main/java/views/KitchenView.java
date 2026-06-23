@@ -166,7 +166,7 @@ class PillLabel extends JLabel {
     }
 }
 
-public class KitchenView extends javax.swing.JFrame { // Tambahkan deklarasi class dan extends JFrame
+public class KitchenView extends javax.swing.JFrame {
 
     private JPanel drinkListPanel;
     private JTable foodTable;
@@ -176,6 +176,7 @@ public class KitchenView extends javax.swing.JFrame { // Tambahkan deklarasi cla
     private JButton btnMember;
     private JButton btnKitchen;
     private JButton btnLogout;
+    private RoundedButton btnProsesDapur; // ← TAMBAHAN: field untuk tombol Proses Dapur
 
     public KitchenView() {
         setTitle("Kitchen Queue");
@@ -195,7 +196,6 @@ public class KitchenView extends javax.swing.JFrame { // Tambahkan deklarasi cla
         sidebar.setBackground(new Color(0, 110, 110));
         sidebar.setLayout(new BorderLayout());
 
-        // TOP SECTION
         JPanel topPanel = new JPanel();
         topPanel.setOpaque(false);
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
@@ -216,8 +216,8 @@ public class KitchenView extends javax.swing.JFrame { // Tambahkan deklarasi cla
 
         topPanel.add(Box.createVerticalStrut(70));
 
-        btnOrder = createOldStyleButton("Order");
-        btnMember = createOldStyleButton("Member");
+        btnOrder   = createOldStyleButton("Order");
+        btnMember  = createOldStyleButton("Member");
         btnKitchen = createOldStyleButton("Kitchen");
 
         topPanel.add(btnOrder);
@@ -226,7 +226,6 @@ public class KitchenView extends javax.swing.JFrame { // Tambahkan deklarasi cla
         topPanel.add(Box.createVerticalStrut(45));
         topPanel.add(btnKitchen);
 
-        // BOTTOM SECTION
         JPanel bottomPanel = new JPanel();
         bottomPanel.setOpaque(false);
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(20, 35, 30, 35));
@@ -276,12 +275,10 @@ public class KitchenView extends javax.swing.JFrame { // Tambahkan deklarasi cla
         header.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
 
         JLabel title = new JLabel("🍴 Kitchen Queue");
-//        title.setFont(new Font("Segoe UI", Font.BOLD, 30));
         title.setFont(new Font("Dialog", Font.BOLD, 30));
 
         JButton dots = new JButton("⋯");
         dots.setFocusPainted(false);
-//        dots.setFont(new Font("Segoe UI", Font.BOLD, 20));
         dots.setFont(new Font("Dialog", Font.BOLD, 20));
 
         header.add(title, BorderLayout.WEST);
@@ -301,10 +298,10 @@ public class KitchenView extends javax.swing.JFrame { // Tambahkan deklarasi cla
         setCustomerAktif(0);
         infoPanel.add(customerLabel, BorderLayout.WEST);
 
-        RoundedButton processBtn = new RoundedButton("▷ Proses Dapur");
-        processBtn.setPreferredSize(new Dimension(220, 70));
-        
-        infoPanel.add(processBtn, BorderLayout.EAST);
+        // ← TAMBAHAN: simpan ke field, bukan variabel lokal
+        btnProsesDapur = new RoundedButton("▷ Proses Dapur");
+        btnProsesDapur.setPreferredSize(new Dimension(220, 70));
+        infoPanel.add(btnProsesDapur, BorderLayout.EAST);
 
         body.add(Box.createVerticalStrut(20));
         body.add(infoPanel);
@@ -337,7 +334,6 @@ public class KitchenView extends javax.swing.JFrame { // Tambahkan deklarasi cla
         body.add(Box.createVerticalStrut(20));
 
         JLabel footer = new JLabel("ⓘ PriorityQueue untuk makanan | Stack untuk minuman");
-//        footer.setFont(new Font("Segoe UI", Font.PLAIN, 18));
         footer.setFont(new Font("Dialog", Font.PLAIN, 18));
         footer.setForeground(new Color(70, 70, 70));
 
@@ -360,7 +356,6 @@ public class KitchenView extends javax.swing.JFrame { // Tambahkan deklarasi cla
 
         JLabel title = new JLabel("☕ Antrian Makanan");
         title.setForeground(Color.WHITE);
-//        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
         title.setFont(new Font("Dialog", Font.BOLD, 20));
 
         top.add(title);
@@ -401,7 +396,6 @@ public class KitchenView extends javax.swing.JFrame { // Tambahkan deklarasi cla
 
         JLabel title = new JLabel("☕ Antrian Minuman");
         title.setForeground(Color.WHITE);
-//        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
         title.setFont(new Font("Dialog", Font.BOLD, 20));
 
         top.add(title);
@@ -416,13 +410,36 @@ public class KitchenView extends javax.swing.JFrame { // Tambahkan deklarasi cla
         return panel;
     }
 
-    private void loadDummyDrinks() {
-        drinkListPanel.add(createDrinkItem(1, "Asian Dolce\nLatte", "Terakhir\ndipesan"));
-        drinkListPanel.add(createDrinkItem(2, "Caffe Mocha", null));
-        drinkListPanel.add(createDrinkItem(3, "Caffe Latte", null));
-        drinkListPanel.add(createDrinkItem(4, "Cold\nBrew", "Pertama\ndipesan"));
+    // ── Getters ──────────────────────────────────────────────────────────────
+
+    public JTable getFoodTable()             { return foodTable; }
+    public JButton getBtnOrder()             { return btnOrder; }
+    public JButton getBtnMember()            { return btnMember; }
+    public JButton getBtnLogout()            { return btnLogout; }
+    public JButton getBtnProsesDapur() { return btnProsesDapur; } // ← TAMBAHAN
+
+    // ── Actions ───────────────────────────────────────────────────────────────
+
+    public void clearDrinkList() {
+        drinkListPanel.removeAll();
+        drinkListPanel.revalidate();
+        drinkListPanel.repaint();
     }
-    
+
+    public void addDrinkItem(int no, String name, String status) {
+        drinkListPanel.add(createDrinkItem(no, name, status));
+        drinkListPanel.revalidate();
+        drinkListPanel.repaint();
+    }
+
+    /** Kosongkan tampilan antrian setelah diproses dapur */ // ← TAMBAHAN
+    public void resetAntrian() {
+        DefaultTableModel dtm = (DefaultTableModel) foodTable.getModel();
+        dtm.setRowCount(0);
+        clearDrinkList();
+        setCustomerAktif(0);
+    }
+
     private JPanel createDrinkItem(int no, String name, String status) {
         JPanel row = new JPanel(new BorderLayout());
         row.setBackground(Color.WHITE);
@@ -457,34 +474,6 @@ public class KitchenView extends javax.swing.JFrame { // Tambahkan deklarasi cla
         }
 
         return row;
-    }
-
-    public JTable getFoodTable() {
-        return foodTable;
-    }
-
-    public JButton getBtnOrder() {
-        return btnOrder;
-    }
-    
-    public JButton getBtnMember() {
-        return btnMember;
-    }
-    
-    public JButton getBtnLogout() {
-        return btnLogout;
-    }
-
-    public void clearDrinkList() {
-        drinkListPanel.removeAll();
-        drinkListPanel.revalidate();
-        drinkListPanel.repaint();
-    }
-
-    public void addDrinkItem(int no, String name, String status) {
-        drinkListPanel.add(createDrinkItem(no, name, status));
-        drinkListPanel.revalidate();
-        drinkListPanel.repaint();
     }
 
     public static void main(String[] args) {

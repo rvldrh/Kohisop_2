@@ -40,7 +40,7 @@ public class ReceiptView extends javax.swing.JFrame {
                        User userAktif) {
 
         setTitle("Struk Pembayaran — KohiSop");
-        setSize(400, 820);
+        setSize(600, 820);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -54,32 +54,37 @@ public class ReceiptView extends javax.swing.JFrame {
         card.setBorder(new LineBorder(new Color(210, 210, 210), 1, true));
 
         card.add(createHeader());
-        card.add(createSectionTitle("🍽 ITEM PESANAN"));
+        card.add(createSectionTitlePanel("🍽 ITEM PESANAN"));
 
         itemsPanel = new JPanel();
         itemsPanel.setLayout(new BoxLayout(itemsPanel, BoxLayout.Y_AXIS));
         itemsPanel.setBackground(new Color(252, 250, 245));
-        itemsPanel.setBorder(new EmptyBorder(0, 16, 0, 16));
+        itemsPanel.setBorder(new EmptyBorder(0, 24, 0, 24));
         card.add(itemsPanel);
 
         card.add(createDashedLine());
-        card.add(createSectionTitle("🧾 RINGKASAN BIAYA"));
+        card.add(createSectionTitlePanel("🧾 RINGKASAN BIAYA"));
         card.add(createSummary());
         card.add(createDashedLine());
-        card.add(createSectionTitle("👤 INFO PELANGGAN & PEMBAYARAN"));
+        card.add(createSectionTitlePanel("👤 INFO PELANGGAN & PEMBAYARAN"));
         card.add(createCustomerInfo());
         card.add(Box.createVerticalStrut(20));
 
+        // Footer — dibungkus JPanel agar benar-benar center
+        JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        footerPanel.setBackground(new Color(252, 250, 245));
         JLabel footer = new JLabel(
-                "<html><center><b>Terima kasih & silakan datang kembali!</b><br>Simpan struk ini sebagai bukti pembayaran</center></html>");
-        footer.setAlignmentX(Component.CENTER_ALIGNMENT);
+                "<html><center><b>Terima kasih &amp; silakan datang kembali!</b><br>"
+                + "Simpan struk ini sebagai bukti pembayaran</center></html>");
+        footer.setHorizontalAlignment(SwingConstants.CENTER);
         footer.setForeground(new Color(0, 120, 90));
         footer.setFont(new Font("Dialog", Font.PLAIN, 12));
-        card.add(footer);
+        footerPanel.add(footer);
+        card.add(footerPanel);
         card.add(Box.createVerticalStrut(20));
 
-        JScrollPane scroll = new JScrollPane(card);
-        root.add(scroll, BorderLayout.CENTER);
+        // Langsung taruh card tanpa JScrollPane
+        root.add(card, BorderLayout.CENTER);
 
         // ── Bottom button panel ───────────────────────────────────────────────
         JPanel bottomPanel = buildBottomPanel(rincian, cartItems, userAktif);
@@ -211,10 +216,21 @@ public class ReceiptView extends javax.swing.JFrame {
     }
 
     private JLabel createSectionTitle(String text) {
-        JLabel label = new JLabel(text);
-        label.setBorder(new EmptyBorder(12, 16, 8, 16));
+        JLabel label = new JLabel(text, SwingConstants.CENTER);
+        label.setBorder(new EmptyBorder(12, 24, 8, 24));
         label.setFont(new Font("Dialog", Font.BOLD, 13));
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // Bungkus dalam panel agar center benar-benar full-width
         return label;
+    }
+
+    private JPanel createSectionTitlePanel(String text) {
+        JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        p.setBackground(new Color(252, 250, 245));
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Dialog", Font.BOLD, 13));
+        p.add(label);
+        return p;
     }
 
     private JPanel createSummary() {
@@ -258,7 +274,7 @@ public class ReceiptView extends javax.swing.JFrame {
         JPanel p = new JPanel();
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
         p.setBackground(new Color(252, 250, 245));
-        p.setBorder(new EmptyBorder(0, 16, 0, 16));
+        p.setBorder(new EmptyBorder(0, 24, 0, 24));
         return p;
     }
 
@@ -271,7 +287,7 @@ public class ReceiptView extends javax.swing.JFrame {
     }
 
     private JPanel row(String key, JLabel valueLabel) {
-        JPanel row = new JPanel(new BorderLayout());
+        JPanel row = new JPanel(new BorderLayout(16, 0));
         row.setBackground(new Color(252, 250, 245));
         row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 28));
         JLabel left = new JLabel(key);

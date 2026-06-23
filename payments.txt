@@ -9,3 +9,4 @@ Admin KohiSop|112000.0|120960.0|Tunai
 Admin KohiSop|112000.0|120960.0|Tunai
 Admin KohiSop|135000.0|143960.0|Tunai
 Admin KohiSop|28000.0|31080.0|Tunai
+rivaldo|70000.0|77686.0|Tunai
