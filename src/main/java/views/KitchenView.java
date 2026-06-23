@@ -175,6 +175,7 @@ public class KitchenView extends javax.swing.JFrame { // Tambahkan deklarasi cla
     private JButton btnOrder;
     private JButton btnMember;
     private JButton btnKitchen;
+    private JButton btnLogout;
 
     public KitchenView() {
         setTitle("Kitchen Queue");
@@ -231,14 +232,14 @@ public class KitchenView extends javax.swing.JFrame { // Tambahkan deklarasi cla
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(20, 35, 30, 35));
         bottomPanel.setLayout(new BorderLayout());
 
-        JButton logout = new JButton("Logout");
-        logout.setBackground(Color.RED);
-        logout.setForeground(Color.WHITE);
-        logout.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        logout.setFocusPainted(false);
-        logout.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        btnLogout = new JButton("Logout");
+        btnLogout.setBackground(Color.RED);
+        btnLogout.setForeground(Color.WHITE);
+        btnLogout.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        btnLogout.setFocusPainted(false);
+        btnLogout.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
-        bottomPanel.add(logout);
+        bottomPanel.add(btnLogout);
 
         sidebar.add(topPanel, BorderLayout.NORTH);
         sidebar.add(bottomPanel, BorderLayout.SOUTH);
@@ -421,7 +422,7 @@ public class KitchenView extends javax.swing.JFrame { // Tambahkan deklarasi cla
         drinkListPanel.add(createDrinkItem(3, "Caffe Latte", null));
         drinkListPanel.add(createDrinkItem(4, "Cold\nBrew", "Pertama\ndipesan"));
     }
-
+    
     private JPanel createDrinkItem(int no, String name, String status) {
         JPanel row = new JPanel(new BorderLayout());
         row.setBackground(Color.WHITE);
@@ -464,6 +465,14 @@ public class KitchenView extends javax.swing.JFrame { // Tambahkan deklarasi cla
 
     public JButton getBtnOrder() {
         return btnOrder;
+    }
+    
+    public JButton getBtnMember() {
+        return btnMember;
+    }
+    
+    public JButton getBtnLogout() {
+        return btnLogout;
     }
 
     public void clearDrinkList() {

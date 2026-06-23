@@ -49,6 +49,23 @@ public class PemesananController {
             updateTabelKeranjang();
             JOptionPane.showMessageDialog(view, "Pesanan dibatalkan.");
         });
+        
+        view.getBtnMember().addActionListener(e -> {
+    
+    double subtotal = 0.0;
+    java.util.List<models.CartItem> cart = new java.util.ArrayList<>();
+
+    views.MembershipFrame memberView = new views.MembershipFrame(
+        this.userAktif, 
+        subtotal, 
+        cart
+    );
+    
+    memberView.setLocationRelativeTo(null);
+    memberView.setVisible(true);
+    
+    view.dispose();
+});
 
         this.view.getBtnSelesai().addActionListener(e -> prosesSelesai());
     }

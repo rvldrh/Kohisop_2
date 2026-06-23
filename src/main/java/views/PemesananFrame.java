@@ -174,9 +174,11 @@ public class PemesananFrame extends javax.swing.JFrame {
 
         btnMember.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         btnMember.setText("Member");
+        btnMember.addActionListener(this::btnMemberActionPerformed);
 
         btnKitchen.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         btnKitchen.setText("Kitchen");
+        btnKitchen.addActionListener(this::btnKitchenActionPerformed);
 
         btnLogout.setBackground(new java.awt.Color(255, 51, 51));
         btnLogout.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
@@ -553,6 +555,24 @@ public class PemesananFrame extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnLogoutActionPerformed
 
+    private void btnKitchenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKitchenActionPerformed
+        // TODO add your handling code here:
+        
+        models.KitchenModel kitchenModel = new models.KitchenModel();
+        views.KitchenView kitchenView = new views.KitchenView();
+
+        new controllers.KitchenController(kitchenModel, kitchenView, this.userAktif);
+
+        kitchenView.setLocationRelativeTo(null);
+        kitchenView.setVisible(true);
+
+        this.dispose();
+    }//GEN-LAST:event_btnKitchenActionPerformed
+
+    private void btnMemberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMemberActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnMemberActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -677,5 +697,9 @@ public class PemesananFrame extends javax.swing.JFrame {
     public JButton getBtnKitchen() {
         return btnKitchen;
     }
+    
+    public JButton getBtnMember() {
+    return btnMember;
+}
 
 }
